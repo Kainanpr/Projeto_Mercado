@@ -1,0 +1,10 @@
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\bin\Debug\MercadoETEC.exe.config
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\bin\Debug\MercadoETEC.exe
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\bin\Debug\MercadoETEC.pdb
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.csprojResolveAssemblyReference.cache
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.Properties.Resources.resources
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.csproj.GenerateResource.Cache
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.exe
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.pdb
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.views.FormCliente.resources
+c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.views.telaPrincipal.resources
