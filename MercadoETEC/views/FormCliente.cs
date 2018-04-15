@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using MercadoETEC.model.conexao;
+
 namespace MercadoETEC.views
 {
     public partial class FormCliente : Form

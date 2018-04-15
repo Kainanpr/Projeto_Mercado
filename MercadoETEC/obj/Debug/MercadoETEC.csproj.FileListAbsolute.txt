@@ -8,3 +8,14 @@ c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj
 c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.pdb
 c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.views.FormCliente.resources
 c:\users\aluno\documents\visual studio 2012\Projects\MercadoETEC\MercadoETEC\obj\Debug\MercadoETEC.views.telaPrincipal.resources
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\bin\Debug\MercadoETEC.exe.config
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\obj\Debug\MercadoETEC.exe
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\obj\Debug\MercadoETEC.pdb
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\obj\Debug\MercadoETEC.csprojResolveAssemblyReference.cache
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\obj\Debug\MercadoETEC.views.FormCliente.resources
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\obj\Debug\MercadoETEC.views.telaPrincipal.resources
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\obj\Debug\MercadoETEC.Properties.Resources.resources
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\obj\Debug\MercadoETEC.csproj.GenerateResource.Cache
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\bin\Debug\MercadoETEC.exe
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\bin\Debug\MercadoETEC.pdb
+C:\Users\KainanXD\Documents\Visual Studio 2013\Projects\Projeto_Mercado\MercadoETEC\bin\Debug\MySql.Data.dll
