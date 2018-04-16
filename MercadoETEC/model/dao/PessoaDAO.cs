@@ -17,19 +17,27 @@ namespace MercadoETEC.model.dao
     class PessoaDAO
     {
 
-        //Método responsável pela iserção da pessoa
-        public void Create(Pessoa pessoa) 
+        /* Método responsável pela iserção da pessoa no bd.
+         * Esse método retorna um objeto do tipo Pessoa que representa a ultima Pessoa
+         * inserido no banco, para que essa Pessoa
+         * possa ser associado a um funcionado ou a um cliente*/
+        public Pessoa Create(Pessoa pessoa) 
         {
             //Recupera a instancia unica do banco de dados
             DataBase dataBase = DataBase.GetInstance();
+
+            //Variavel local responsável por armazenar a ultima pessoa inserida na tabela Pessoa.
+            Pessoa ultimaPessoa = new Pessoa();
 
             try
             {
                 //Tenta abrir a conexao
                 dataBase.AbrirConexao();
 
-                //Query responsavel pela inserção de uma Pessoa
-                string query = "INSERT INTO Pessoa(cpf, nome, idEndereco) VALUES(@Cpf, @Nome, @idEndereco)";
+                /* Utilizamos uma Stored Procedure para retornar a ultima pessoa inserida na tabela Pessoa. 
+                 * Essa procedure foi feita pelo fato de o id ser auto_increment, sendo assim, sem o uso de procedure
+                 * não teriamos o controle de qual id foi inserido por ultimo. */
+                string query = "CALL sp_pessoa_insert (@Cpf, @Nome, @idEndereco)";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -44,8 +52,16 @@ namespace MercadoETEC.model.dao
                 command.Parameters["@Nome"].Value = pessoa.Nome;
                 command.Parameters["@idEndereco"].Value = pessoa.Endereco.Id;
 
-                //Executar instrução sem retorno de dados
-                command.ExecuteNonQuery();
+                //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
+                MySqlDataReader dr = command.ExecuteReader();
+
+                //Percorrer esse objeto até obter todos os dados
+                while (dr.Read())
+                {
+                    ultimaPessoa.Id = dr.GetInt32(0);
+                    ultimaPessoa.Cpf = dr.GetString(1);
+                    ultimaPessoa.Nome = dr.GetString(2);
+                }
 
                 //MessageBox.Show("Conexão com banco de dados efetuada com sucesso");
             }
@@ -60,6 +76,11 @@ namespace MercadoETEC.model.dao
                 //Independente se der erro ou não a conexão com o banco de dados será fechada
                 dataBase.FecharConexao();
             }
+
+            /* Retorna a ultima pessoa inserido na tabela Pessoa 
+             * ppossa ser associado a um funcionado ou a um cliente
+             * (Esse retorno se torna necessario para controlar os ids da tabela, pois é um campo auto_increment) */
+            return ultimaPessoa;
         }
 
     }//Fim da classe

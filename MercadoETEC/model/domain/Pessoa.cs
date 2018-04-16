@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 //OK
 namespace MercadoETEC.model.domain
 {
-    public abstract class Pessoa
+    public class Pessoa
     {
         private int id;
         private string cpf;

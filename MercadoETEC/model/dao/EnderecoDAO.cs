@@ -17,23 +17,25 @@ namespace MercadoETEC.model.dao
     class EnderecoDAO
     {
         /* Método responsável pela iserção do endereço no bd.
-         * Esse método retorna um inteiro que representa o ultimo id
-         * de endereco inserido no banco, para que esse endereço
+         * Esse método retorna um objeto do tipo Endereco que representa o ultimo Endereco
+         * inserido no banco, para que esse endereço
          * possa ser associado a pessoa correta*/
-        public int Create(Endereco endereco)
+        public Endereco Create(Endereco endereco)
         {
             //Recupera a instancia unica do banco de dados
             DataBase dataBase = DataBase.GetInstance();
 
-            //Variavel local responsável por armazenar o ultimo id inserido na tabela Endereco
-            int ultimoId = 0;
+            //Variavel local responsável por armazenar o ultimo endereco inserido na tabela Endereco
+            Endereco ultimoEndereco = new Endereco();
 
             try
             {
                 //Tenta abrir a conexao
                 dataBase.AbrirConexao();
 
-                //Utilizamos uma Stored Procedure para retornar o ultimo id inserido na tabela Endereco
+                /* Utilizamos uma Stored Procedure para retornar o ultimo endereco inserido na tabela Endereco. 
+                 * Essa procedure foi feita pelo fato de o id ser auto_increment, sendo assim, sem o uso de procedure
+                 * não teriamos o controle de qual id foi inserido por ultimo. */
                 string query = "CALL sp_endereco_insert (@Rua, @Numero, @Cep, @Cidade, @Estado)";
 
                 //Comando responsavel pela query
@@ -59,7 +61,12 @@ namespace MercadoETEC.model.dao
                 //Percorrer esse objeto até obter todos os dados
                 while(dr.Read())
                 {
-                    ultimoId = dr.GetInt32(0);
+                    ultimoEndereco.Id = dr.GetInt32(0);
+                    ultimoEndereco.Rua = dr.GetString(1);
+                    ultimoEndereco.Numero = dr.GetInt32(2);
+                    ultimoEndereco.Cep = dr.GetInt32(3);
+                    ultimoEndereco.Cidade = dr.GetString(4);
+                    ultimoEndereco.Estado = dr.GetString(5);
                 }
             }
             //Caso ocorra algum tipo de exceção será tratado aqui.
@@ -74,9 +81,10 @@ namespace MercadoETEC.model.dao
                 dataBase.FecharConexao();
             }
 
-            /* Retorna o ultimo id inserido na tabela Endereco 
-             * para que possa ser asociado a Pessoa correta */
-            return ultimoId;
+            /* Retorna o ultimo endereco inserido na tabela Endereco 
+             * para que possa ser asociado a Pessoa correta
+             * (Esse retorno se torna necessario para controlar os ids da tabela, pois é um campo auto_increment) */
+            return ultimoEndereco;
         }
 
     }//Fim da classe

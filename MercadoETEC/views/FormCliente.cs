@@ -15,12 +15,16 @@ using MercadoETEC.model.dao;
 namespace MercadoETEC.views
 {
 
-    /* View responsavel pelo formulario de clientes, associando cliente a endereço */
+    /* View responsavel pelo formulario de clientes, associando cliente a endereço
+     * Os eventos de botões representam a camada de controller(C) do MVC */
     public partial class FormCliente : Form
     {
 
         //Atributo responsavel por inserir uma pessoa no banco de dados
         private PessoaDAO pessoaDAO = new PessoaDAO();
+
+        //Atributo responsavel por inserir um cliente no banco de dados
+        private ClienteDAO clienteDAO = new ClienteDAO();
 
         //Atributo responsavel por inserir um endereco no banco de dados
         private EnderecoDAO enderecoDAO = new EnderecoDAO();
@@ -51,20 +55,24 @@ namespace MercadoETEC.views
         private void btnSalvar_Click(object sender, EventArgs e)
         {
             //Retorna um objeto Cliente, captura os dados da view pelo metodo privado GetDTO()
-            Pessoa p = GetDTO();
+            Cliente cliente = GetDTO();
 
-            /* Grava o endereço no banco de dados e retorna o ultimo id inserido no banco 
-             * para ser associado a pessoa correta */
-            int ultimoIdEndereco = enderecoDAO.Create(p.Endereco);
+            /* Grava o endereço no banco de dados e retorna o ultimo endereco inserido no banco 
+             * ja com seu id setado para ser associado ao cliente correta */
+            cliente.Endereco = enderecoDAO.Create(cliente.Endereco);
 
-            /* Seta o ID do endereço do cliente para ser asociado no banco corretamente */
-            p.Endereco.Id = ultimoIdEndereco;
+            /* Guarda a pessoa no banco de dados 
+             * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). */
+            Pessoa pessoa = pessoaDAO.Create(cliente);
 
-            //Guarda a pessoa no banco de dados
-            pessoaDAO.Create(p);
+            /* Associa o id do cliente ao id da pessoa retornada do banco
+             * Esse passo é necessario devido a herança no C# e a especialização no banco  */
+            cliente.Id = pessoa.Id;
+
+            /* Guardar o cliente no banco de dados */
+            clienteDAO.Create(cliente);
 
             //Comandos abaixos apenas para resetar o layout
-            LimparCamposGeral();
             DesabilitarCamposGeral();
 
             btnSalvar.Enabled = false;

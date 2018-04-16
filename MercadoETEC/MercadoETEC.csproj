@@ -48,7 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="model\conexao\DataBase.cs" />
+    <Compile Include="model\dao\ClienteDAO.cs" />
     <Compile Include="model\dao\EnderecoDAO.cs" />
+    <Compile Include="model\dao\interfaceDAO\IClienteDAO.cs" />
     <Compile Include="model\dao\interfaceDAO\IEnderecoDAO.cs" />
     <Compile Include="model\dao\interfaceDAO\IPessoaDAO.cs" />
     <Compile Include="model\dao\PessoaDAO.cs" />
