@@ -54,23 +54,33 @@ namespace MercadoETEC.views
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {
-            //Retorna um objeto Cliente, captura os dados da view pelo metodo privado GetDTO()
-            Cliente cliente = GetDTO();
+            try
+            {
+                //Retorna um objeto Cliente, captura os dados da view pelo metodo privado GetDTOCadastro()
+                Cliente cliente = GetDTOCadastro();
 
-            /* Grava o endereço no banco de dados e retorna o ultimo endereco inserido no banco 
-             * ja com seu id setado para ser associado ao cliente correta */
-            cliente.Endereco = enderecoDAO.Create(cliente.Endereco);
+                /* Grava o endereço no banco de dados e retorna o ultimo endereco inserido no banco 
+                 * ja com seu id setado para ser associado ao cliente correta */
+                cliente.Endereco = enderecoDAO.Create(cliente.Endereco);
 
-            /* Guarda a pessoa no banco de dados 
-             * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). */
-            Pessoa pessoa = pessoaDAO.Create(cliente);
+                /* Guarda a pessoa no banco de dados 
+                 * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). */
+                Pessoa pessoa = pessoaDAO.Create(cliente);
 
-            /* Associa o id do cliente ao id da pessoa retornada do banco
-             * Esse passo é necessario devido a herança no C# e a especialização no banco  */
-            cliente.Id = pessoa.Id;
+                /* Associa o id do cliente ao id da pessoa retornada do banco
+                 * Esse passo é necessario devido a herança no C# e a especialização no banco  */
+                cliente.Id = pessoa.Id;
 
-            /* Guardar o cliente no banco de dados */
-            clienteDAO.Create(cliente);
+                /* Guardar o cliente no banco de dados */
+                clienteDAO.Create(cliente);
+            }
+            //Captura uma exceção caso o usuario digite algo que esteja incorreto
+            catch(FormatException)
+            {
+                MessageBox.Show("Erro: Dados incorretos");
+                LimparCamposGeral();
+            }
+            
 
             //Comandos abaixos apenas para resetar o layout
             DesabilitarCamposGeral();
@@ -79,11 +89,39 @@ namespace MercadoETEC.views
             btnCancelar.Enabled = false;
             btnPesquisar.Enabled = true;
             btnAlterar.Enabled = true;
+            txtCodigo.Enabled = true;
         }
 
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
-            txtCodigo.Enabled = true;
+            
+            //Irá tentar encontrar um cliente
+            try
+            {
+                //Captura o id digitado pelo usuario para pesquisar
+                int id = int.Parse(txtCodigo.Text);
+
+                //Encontra o cliente de acordo com seu ID
+                Cliente cliente = clienteDAO.Read(id);
+
+                //Chama o metodo auxiliar para atualizar a view
+                SetDTO(cliente);
+
+            }
+            //Captura uma exceção caso o usuario digite algo que não seja números inteiros
+            catch(FormatException)
+            {
+                MessageBox.Show("Erro: Digite apenas números");
+                LimparCamposGeral();
+            }
+            //Caso não encontre nenhum cliente irá recuperar a exceção que eu lancei
+            catch(Exception ex)
+            {
+                //Recupera a exceção com o erro que eu instanciei
+                MessageBox.Show("Erro: " + ex.Message);
+                LimparCamposGeral();
+            }
+ 
         }
 
         private void btnAlterar_Click(object sender, EventArgs e)
@@ -100,6 +138,7 @@ namespace MercadoETEC.views
             btnSalvar.Enabled = false;
             btnPesquisar.Enabled = true;
             btnAlterar.Enabled = true;
+            txtCodigo.Enabled = true;
         }
 
         //Metodos auxiliares
@@ -146,7 +185,7 @@ namespace MercadoETEC.views
 
         /* Metodos auxiliares (DTO). 
          * Coleta os dados da visão e passa os dados para o modelo */
-        private Cliente GetDTO()
+        private Cliente GetDTOCadastro()
         {
             Cliente cliente = new Cliente();
             cliente.Nome = txtNome.Text;
@@ -172,7 +211,23 @@ namespace MercadoETEC.views
             return cliente;
         }
 
+        /* Metodos auxiliares (DTO). 
+         * Coloca as informações do modelo na visão */
+        private void SetDTO(Cliente cliente)
+        {
 
+            txtNome.Text = cliente.Nome;
+            txtCpf.Text = cliente.Cpf;
+            txtEmail.Text = cliente.Email;
+
+            //txtTelefone.Text = cliente.Telefones[0].Numero;
+
+            txtEndereco.Text = cliente.Endereco.Rua;
+            txtNumero.Text = cliente.Endereco.Numero.ToString();
+            txtCep.Text = cliente.Endereco.Cep.ToString();
+            txtCidade.Text = cliente.Endereco.Cidade ;
+            txtEstado.Text = cliente.Endereco.Estado;
+        }
 
     }
 }

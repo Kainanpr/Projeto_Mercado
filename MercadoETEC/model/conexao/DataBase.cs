@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using MySql.Data.MySqlClient;
+using System.Data;
 
 namespace MercadoETEC.model.conexao
 {
@@ -49,7 +50,8 @@ namespace MercadoETEC.model.conexao
         //Método responsável por abrir a conexão
         public void AbrirConexao()
         {
-            objConexao.Open();
+            if (objConexao.State != ConnectionState.Open)
+                objConexao.Open();    
         }
 
         //Método responsável por fechar a conexão

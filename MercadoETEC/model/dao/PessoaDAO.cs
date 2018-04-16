@@ -55,13 +55,8 @@ namespace MercadoETEC.model.dao
                 //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
                 MySqlDataReader dr = command.ExecuteReader();
 
-                //Percorrer esse objeto até obter todos os dados
-                while (dr.Read())
-                {
-                    ultimaPessoa.Id = dr.GetInt32(0);
-                    ultimaPessoa.Cpf = dr.GetString(1);
-                    ultimaPessoa.Nome = dr.GetString(2);
-                }
+                //Chama o metodo auxiliar para setar a Pessoa vindo do banco 
+                ultimaPessoa = setPessoa(dr, ultimaPessoa);
 
                 //MessageBox.Show("Conexão com banco de dados efetuada com sucesso");
             }
@@ -83,11 +78,106 @@ namespace MercadoETEC.model.dao
             return ultimaPessoa;
         }
 
-        public Pessoa Read(int id) { return null; }
+        /* Pesquisa uma pessoa pelo seu ID */
+        public Pessoa Read(int id)
+        {
+            //Recupera a instancia unica do banco de dados
+            DataBase dataBase = DataBase.GetInstance();
+
+            //Variavel local responsável por armazenar o endereco pesquisado de acordo com seu ID
+            Pessoa pessoa = new Pessoa();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                /* Query responsavel por buscar uma pessoa pelo seu id */
+                string query = "SELECT id, cpf, nome, idEndereco FROM Pessoa WHERE id = @Id;";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Adição de parametros e espeficicação dos tipos
+                command.Parameters.Add("@Id", MySqlDbType.Int32);
+
+                //Atribuição de valores
+                command.Parameters["@Id"].Value = id;
+
+                //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
+                MySqlDataReader dr = command.ExecuteReader();
+
+                //Chama o metodo auxiliar para setar a Pessoa vindo do banco 
+                pessoa = setPessoa(dr, pessoa);
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+            }
+            finally
+            {
+                //Independente se ocorrer erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+
+
+            
+            /* Chamar o metodo auxiliar para carregar os dados do 
+            * endereço da pessoa de acordo com o id do endereço. 
+            * Apenas chama o metodo se caso a pessoa possui um endereço */
+            if(pessoa.Endereco != null)
+                pessoa.Endereco = setEndereco(pessoa);
+            
+
+            /* Retorna a pessoa pesquisada de acordo com seu ID */
+            return pessoa;
+        }
+
         public void Update(Pessoa pessoa) { }
         public void Delete(int id) { }
         public List<Pessoa> ListAll() { return null; }
         public List<Pessoa> FindByName(string name) { return null; }
+
+        //Metodo auxiliar para preencher o endereço com os dados do banco
+        private Pessoa setPessoa(MySqlDataReader dr, Pessoa pessoa)
+        {
+
+            //Verifica se tem dados para ser lido
+            if (dr.Read())
+            {
+                pessoa.Id = dr.GetInt32(0);
+                pessoa.Cpf = dr.GetString(1);
+                pessoa.Nome = dr.GetString(2);
+
+                //Instancia um endereço para pessoa
+                pessoa.Endereco = new Endereco();
+
+                //Seta o id do endereço da pessoa de acordo com o dado da coluna idEndereco vindo do banco
+                pessoa.Endereco.Id = dr.GetInt32(3);
+            }
+            else
+            {
+                /*Caso não tenha nenhum dado para ser lido irá lançar uma 
+                 *exceção para ser recuperada posteriormente no controler */
+                throw new Exception("Pessoa não encontrada");
+            }
+                
+            return pessoa;
+        }
+
+        //Metodo auxiliar para preencher o endereço com os dados do banco
+        private Endereco setEndereco(Pessoa pessoa)
+        {
+            //Variavel local responsavel por realizar as operações de CRUD no endereço no banco de dados
+            EnderecoDAO enderecoDAO = new EnderecoDAO();
+
+            //Seta o endereco da pessoa de acordo com o id de seu endereço(Seta nome da rua, cidade, estado etc)
+            Endereco endereco = enderecoDAO.Read(pessoa.Endereco.Id);
+
+            return endereco;
+        }
 
     }//Fim da classe
 }//Fim da interface

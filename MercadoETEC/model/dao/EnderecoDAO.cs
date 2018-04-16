@@ -58,16 +58,8 @@ namespace MercadoETEC.model.dao
                 //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
                 MySqlDataReader dr = command.ExecuteReader();
 
-                //Percorrer esse objeto até obter todos os dados
-                while(dr.Read())
-                {
-                    ultimoEndereco.Id = dr.GetInt32(0);
-                    ultimoEndereco.Rua = dr.GetString(1);
-                    ultimoEndereco.Numero = dr.GetInt32(2);
-                    ultimoEndereco.Cep = dr.GetInt32(3);
-                    ultimoEndereco.Cidade = dr.GetString(4);
-                    ultimoEndereco.Estado = dr.GetString(5);
-                }
+                //Chama o metodo auxiliar para setar o Endereco vindo do banco 
+                ultimoEndereco = setEndereco(dr, ultimoEndereco);
             }
             //Caso ocorra algum tipo de exceção será tratado aqui.
             catch (MySqlException ex)
@@ -87,7 +79,54 @@ namespace MercadoETEC.model.dao
             return ultimoEndereco;
         }
 
-        public Endereco Read(int id) { return null; }
+        /* Pesquisa um endereco pelo seu ID */
+        public Endereco Read(int id) 
+        {
+            //Recupera a instancia unica do banco de dados
+            DataBase dataBase = DataBase.GetInstance();
+
+            //Variavel local responsável por armazenar o endereco pesquisado de acordo com seu ID
+            Endereco endereco = new Endereco();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                /* Query responsavel por buscar um endereco pelo seu id */
+                string query = "SELECT * FROM Endereco WHERE id = @Id";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Adição de parametros e espeficicação dos tipos
+                command.Parameters.Add("@Id", MySqlDbType.Int32);
+
+                //Atribuição de valores
+                command.Parameters["@Id"].Value = id;
+
+                //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
+                MySqlDataReader dr = command.ExecuteReader();
+
+                //Chama o metodo auxiliar para setar o Endereco vindo do banco 
+                endereco = setEndereco(dr, endereco);
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+            }
+            finally
+            {
+                //Independente se ocorrer erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+
+            /* Retorna o endereco pesquisado de acordo com seu ID */
+            return endereco;
+        }
+
         public void Update(Endereco endereco) { }
         public void Delete(int id) { }
         public List<Endereco> ListAll() { return null; }
@@ -95,6 +134,29 @@ namespace MercadoETEC.model.dao
         public Endereco FindByCep(int cep) { return null; }
         public void DeleteByCep(int cep) { }
 
+
+        //Metodo auxiliar para preencher o endereço com os dados do banco
+        private Endereco setEndereco(MySqlDataReader dr, Endereco endereco)
+        {
+            //Verifica se tem dados para ser lido
+            if(dr.Read())
+            {
+                endereco.Id = dr.GetInt32(0);
+                endereco.Rua = dr.GetString(1);
+                endereco.Numero = dr.GetInt32(2);
+                endereco.Cep = dr.GetInt32(3);
+                endereco.Cidade = dr.GetString(4);
+                endereco.Estado = dr.GetString(5);
+            }
+            else
+            {
+                /*Caso não tenha nenhum dado para ser lido irá lançar uma 
+                 *exceção para ser recuperada posteriormente no controler */
+                throw new Exception("Endereço não encontrado");
+            }
+
+            return endereco;
+        }
 
     }//Fim da classe
 }//Fim da interface
