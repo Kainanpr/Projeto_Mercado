@@ -18,7 +18,7 @@ namespace MercadoETEC.model.conexao
 
         //Variaveis de configuração de acesso ao banco de dados
         private string server = "localhost";
-        private string database = "MercadoETECs";
+        private string database = "MercadoETEC";
         private string usuario = "root";
         private string senha = "";
 
