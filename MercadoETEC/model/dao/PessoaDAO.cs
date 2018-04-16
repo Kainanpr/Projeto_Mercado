@@ -14,7 +14,7 @@ using System.Windows.Forms;
 namespace MercadoETEC.model.dao
 {
     //Implementa a interface IPessoaDAO, sendo assim, é obrigado a implementar seus métodos abstratos
-    class PessoaDAO
+    class PessoaDAO : IPessoaDAO
     {
 
         /* Método responsável pela iserção da pessoa no bd.
@@ -82,6 +82,12 @@ namespace MercadoETEC.model.dao
              * (Esse retorno se torna necessario para controlar os ids da tabela, pois é um campo auto_increment) */
             return ultimaPessoa;
         }
+
+        public Pessoa Read(int id) { return null; }
+        public void Update(Pessoa pessoa) { }
+        public void Delete(int id) { }
+        public List<Pessoa> ListAll() { return null; }
+        public List<Pessoa> FindByName(string name) { return null; }
 
     }//Fim da classe
 }//Fim da interface

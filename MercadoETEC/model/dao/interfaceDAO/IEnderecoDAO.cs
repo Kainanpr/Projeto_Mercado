@@ -12,7 +12,7 @@ namespace MercadoETEC.model.dao.interfaceDAO
      *terá que implementar seus metodos abstratos */
     interface IEnderecoDAO
     {
-        void Create(Endereco endereco);
+        Endereco Create(Endereco endereco);
         Endereco Read(int id);
         void Update(Endereco endereco);
         void Delete(int id);

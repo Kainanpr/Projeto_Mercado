@@ -14,7 +14,7 @@ using System.Windows.Forms;
 namespace MercadoETEC.model.dao
 {
     //Implementa a interface IClienteDAO, sendo assim, é obrigado a implementar seus métodos abstratos
-    class ClienteDAO
+    class ClienteDAO : IClienteDAO
     {
 
         /* Método responsável pela iserção do cliente no bd. */
@@ -59,6 +59,12 @@ namespace MercadoETEC.model.dao
                 dataBase.FecharConexao();
             }
         }
+
+        public Cliente Read(int id) { return null; }
+        public void Update(Cliente cliente) { }
+        public void Delete(int id) { }
+        public List<Cliente> ListAll() { return null; }
+        public List<Cliente> FindByName(string name) { return null; }
 
     }//Fim da classe
 }//Fim da interface

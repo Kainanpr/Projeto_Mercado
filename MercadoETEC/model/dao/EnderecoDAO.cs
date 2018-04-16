@@ -14,7 +14,7 @@ using System.Windows.Forms;
 namespace MercadoETEC.model.dao
 {
     //Implementa a interface IEnderecoDAO, sendo assim, é obrigado a implementar seus métodos abstratos
-    class EnderecoDAO
+    class EnderecoDAO : IEnderecoDAO
     {
         /* Método responsável pela iserção do endereço no bd.
          * Esse método retorna um objeto do tipo Endereco que representa o ultimo Endereco
@@ -86,6 +86,15 @@ namespace MercadoETEC.model.dao
              * (Esse retorno se torna necessario para controlar os ids da tabela, pois é um campo auto_increment) */
             return ultimoEndereco;
         }
+
+        public Endereco Read(int id) { return null; }
+        public void Update(Endereco endereco) { }
+        public void Delete(int id) { }
+        public List<Endereco> ListAll() { return null; }
+        public List<Endereco> FindByNameRua(string nameRua) { return null; }
+        public Endereco FindByCep(int cep) { return null; }
+        public void DeleteByCep(int cep) { }
+
 
     }//Fim da classe
 }//Fim da interface

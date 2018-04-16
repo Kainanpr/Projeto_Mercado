@@ -12,7 +12,7 @@ namespace MercadoETEC.model.dao.interfaceDAO
      *terá que implementar seus metodos abstratos */
     interface IPessoaDAO
     {
-        void Create(Pessoa pessoa);
+        Pessoa Create(Pessoa pessoa);
         Pessoa Read(int id);
         void Update(Pessoa pessoa);
         void Delete(int id);
