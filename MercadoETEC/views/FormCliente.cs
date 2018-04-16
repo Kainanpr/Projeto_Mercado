@@ -14,7 +14,8 @@ using MercadoETEC.model.dao;
 
 namespace MercadoETEC.views
 {
-    
+
+    /* View responsavel pelo formulario de clientes, associando cliente a endereço */
     public partial class FormCliente : Form
     {
 
