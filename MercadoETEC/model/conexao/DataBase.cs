@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 
 namespace MercadoETEC.model.conexao
@@ -19,7 +18,7 @@ namespace MercadoETEC.model.conexao
 
         //Variaveis de configuração de acesso ao banco de dados
         private string server = "localhost";
-        private string database = "teste";
+        private string database = "MercadoETEC";
         private string usuario = "root";
         private string senha = "";
 
@@ -50,15 +49,7 @@ namespace MercadoETEC.model.conexao
         //Método responsável por abrir a conexão
         public void AbrirConexao()
         {
-            try
-            {
-                objConexao.Open();
-                //MessageBox.Show("Conexão com banco de dados efetuada com sucesso");
-            }
-            catch(MySqlException ex)
-            {
-                MessageBox.Show("Erro ao tentar se conectar com o banco de dados: " + ex.Message);
-            }
+            objConexao.Open();
         }
 
         //Método responsável por fechar a conexão

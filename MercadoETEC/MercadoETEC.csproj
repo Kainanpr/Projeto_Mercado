@@ -48,11 +48,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="model\conexao\DataBase.cs" />
+    <Compile Include="model\dao\EnderecoDAO.cs" />
+    <Compile Include="model\dao\interfaceDAO\IEnderecoDAO.cs" />
+    <Compile Include="model\dao\interfaceDAO\IPessoaDAO.cs" />
+    <Compile Include="model\dao\PessoaDAO.cs" />
+    <Compile Include="model\domain\Carrinho.cs" />
+    <Compile Include="model\domain\Categoria.cs" />
+    <Compile Include="model\domain\Cliente.cs" />
+    <Compile Include="model\domain\Endereco.cs" />
+    <Compile Include="model\domain\Fornecedor.cs" />
+    <Compile Include="model\domain\Funcionario.cs" />
+    <Compile Include="model\domain\ItemCarrinho.cs" />
+    <Compile Include="model\domain\Pessoa.cs" />
+    <Compile Include="model\domain\Produto.cs" />
+    <Compile Include="model\domain\Telefone.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="teste\MainTeste.cs" />
     <Compile Include="views\FormCliente.cs">
       <SubType>Form</SubType>
     </Compile>
