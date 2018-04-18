@@ -86,7 +86,8 @@ namespace MercadoETEC.views
                 //Captura o id digitado pelo usuario para pesquisar
                 int id = int.Parse(txtCodigo.Text);
 
-                //Encontra o cliente de acordo com seu ID
+                /*Encontra o cliente de acordo com seu ID 
+                 *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
                 Cliente cliente = clienteService.Read(id);
 
                 //Chama o metodo auxiliar para atualizar a view
@@ -111,7 +112,34 @@ namespace MercadoETEC.views
 
         private void btnAlterar_Click(object sender, EventArgs e)
         {
-            txtCodigo.Enabled = true;
+            //Irá tentar encontrar um cliente
+            try
+            {
+                //Captura o id digitado pelo usuario para pesquisar
+                int id = int.Parse(txtCodigo.Text);
+
+                /*Encontra o cliente de acordo com seu ID 
+                 *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
+                Cliente cliente = clienteService.Read(id);
+
+                //Chama o metodo auxiliar para atualizar a view
+                SetDTO(cliente);
+
+            }
+            //Captura uma exceção caso o usuario digite algo que não seja números inteiros
+            catch (FormatException)
+            {
+                MessageBox.Show("Erro: Digite apenas números");
+                LimparCamposGeral();
+            }
+            //Caso não encontre nenhum cliente irá recuperar a exceção que eu lancei
+            catch (Exception ex)
+            {
+                //Recupera a exceção com o erro que eu instanciei
+                MessageBox.Show("Erro: " + ex.Message);
+                LimparCamposGeral();
+            }
+
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -173,19 +201,19 @@ namespace MercadoETEC.views
         private Cliente GetDTOCadastro()
         {
             Cliente cliente = new Cliente();
-            cliente.Nome = txtNome.Text;
-            cliente.Cpf = txtCpf.Text;
-            cliente.Email = txtEmail.Text;
+            cliente.Nome = txtNome.Text == "" ? null : txtNome.Text;
+            cliente.Cpf = txtCpf.Text == "" ? null : txtCpf.Text;
+            cliente.Email = txtEmail.Text == "" ? null : txtEmail.Text;
 
             Telefone tel = new Telefone();
-            tel.Numero = txtTelefone.Text;
+            tel.Numero = txtTelefone.Text == "" ? null : txtTelefone.Text;
 
             Endereco end = new Endereco();
-            end.Rua = txtEndereco.Text;
+            end.Rua = txtEndereco.Text == "" ? null : txtEndereco.Text;
             end.Numero = int.Parse(txtNumero.Text);
             end.Cep = int.Parse(txtCep.Text);
-            end.Cidade = txtCidade.Text;
-            end.Estado = txtEstado.Text;
+            end.Cidade = txtCidade.Text == "" ? null : txtCidade.Text;
+            end.Estado = txtEstado.Text == "" ? null : txtEstado.Text;
 
             //Associa o cliente a um telefone
             cliente.Telefones.Add(tel);
@@ -205,7 +233,7 @@ namespace MercadoETEC.views
             txtCpf.Text = cliente.Cpf;
             txtEmail.Text = cliente.Email;
 
-            //txtTelefone.Text = cliente.Telefones[0].Numero;
+            txtTelefone.Text = cliente.Telefones[0].Numero;
 
             txtEndereco.Text = cliente.Endereco.Rua;
             txtNumero.Text = cliente.Endereco.Numero.ToString();

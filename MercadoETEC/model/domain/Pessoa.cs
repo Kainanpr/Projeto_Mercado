@@ -13,7 +13,7 @@ namespace MercadoETEC.model.domain
         private string cpf;
         private string nome;
         private Endereco endereco;
-        private HashSet<Telefone> telefones = new HashSet<Telefone>();
+        private List<Telefone> telefones = new List<Telefone>();
         private List<Carrinho> carrinhos = new List<Carrinho>();
 
         //Construtor sem argumentos
@@ -32,7 +32,7 @@ namespace MercadoETEC.model.domain
         public string Cpf { get { return cpf; } set { cpf = value; } }
         public string Nome { get { return nome; } set { nome = value; } }
         public Endereco Endereco { get { return endereco; } set { endereco = value; } }
-        public HashSet<Telefone> Telefones { get { return telefones; } set { telefones = value; } }
+        public List<Telefone> Telefones { get { return telefones; } set { telefones = value; } }
         public List<Carrinho> Carrinhos { get { return carrinhos; } set { carrinhos = value; } }
 
 

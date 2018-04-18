@@ -13,23 +13,15 @@ using System.Windows.Forms;
 
 namespace MercadoETEC.model.dao
 {
-    //Implementa a interface IClienteDAO, sendo assim, é obrigado a implementar seus métodos abstratos
-    class ClienteDAO : IClienteDAO
+    //Implementa a interface ITelefoneDAO, sendo assim, é obrigado a implementar seus métodos abstratos
+    class TelefoneDAO : ITelefoneDAO
     {
         //Atributo responsavel por realizara conexão com o banco de dados
         private DataBase dataBase;
 
-        //Atributo responsavel por realizar as operações de CRUD na pessoa no banco de dados
-        private PessoaDAO pessoaDAO = new PessoaDAO();
-
-        /* Método responsável pela iserção do cliente no bd. */
-        public Cliente Create(Cliente cliente)
+        /* Método responsável pela iserção do telefone no bd. */
+        public void Create(Telefone telefone)
         {
-            /* Guarda a pessoa no banco de dados 
-             * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). 
-             * (Logo apos seta o Id do cliente com o id da pessoa vinda do banco de dados) */
-            cliente.Id = pessoaDAO.Create<Cliente>(cliente).Id;
-
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
 
@@ -38,19 +30,19 @@ namespace MercadoETEC.model.dao
                 //Tenta abrir a conexao
                 dataBase.AbrirConexao();
 
-                //Query responsavel pela inserção de um Cliente
-                string query = "INSERT INTO Cliente(id, email) VALUES(@Id, @Email)";
+                //Query responsavel pela inserção de um telefone
+                string query = "INSERT INTO Telefone(id, numero) VALUES(@Id, @Numero)";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
 
                 //Adição de parametros e espeficicação dos tipos
                 command.Parameters.Add("@Id", MySqlDbType.Int32);
-                command.Parameters.Add("@Email", MySqlDbType.String);
+                command.Parameters.Add("@Numero", MySqlDbType.String);
 
                 //Atribuição de valores
-                command.Parameters["@Id"].Value = cliente.Id;
-                command.Parameters["@Email"].Value = cliente.Email;
+                command.Parameters["@Id"].Value = telefone.Id;
+                command.Parameters["@Numero"].Value = telefone.Numero;
 
                 //Executar instrução sem retorno de dados
                 command.ExecuteNonQuery();
@@ -68,28 +60,24 @@ namespace MercadoETEC.model.dao
                 //Independente se der erro ou não a conexão com o banco de dados será fechada
                 dataBase.FecharConexao();
             }
-
-            //Retorna o cliente cadastrado ja com seu id setado, ou seja, id gerado no banco
-            return cliente;
         }
 
-        /* Pesquisa um cliente pelo seu ID */
-        public Cliente Read(int id)
+        /* Pesquisa um telefone pelo seu ID */
+        public Telefone Read(int id)
         {
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
 
-            //Variavel local responsável por armazenar o cliente pesquisado de acordo com seu ID
-            //Chama o metodo generico da classe pessoaDAO
-            Cliente cliente = pessoaDAO.Read<Cliente>(id);
+            //Variavel local responsável por armazenar o telefone pesquisado de acordo com seu ID
+            Telefone telefone = new Telefone();
 
             try
             {
                 //Tenta abrir a conexao
                 dataBase.AbrirConexao();
 
-                /* Query responsavel por buscar um cliente pelo seu id */
-                string query = "SELECT email FROM Cliente WHERE id = @Id;";
+                /* Query responsavel por buscar um telefone pelo seu id */
+                string query = "SELECT * FROM Telefone WHERE id = @Id;";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -104,15 +92,16 @@ namespace MercadoETEC.model.dao
                 MySqlDataReader dr = command.ExecuteReader();
 
                 //Verifica se tem dados para ser lido
-                if(dr.Read())
+                if (dr.Read())
                 {
-                    cliente.Email = dr.IsDBNull(0) == false ? dr.GetString(0) : null;
+                    telefone.Id = dr.IsDBNull(0) == false ? dr.GetInt32(0) : 0;
+                    telefone.Numero = dr.IsDBNull(1) == false ? dr.GetString(1) : null;
                 }
                 else
                 {
                     /*Caso não tenha nenhum dado para ser lido irá lançar uma 
                      *exceção para ser recuperada posteriormente no controler */
-                    throw new Exception("Cliente não encontrado");
+                    throw new Exception("Telefone não encontrado");
                 }
 
             }
@@ -129,13 +118,14 @@ namespace MercadoETEC.model.dao
             }
 
             /* Retorna o endereco pesquisado de acordo com seu ID */
-            return cliente;
+            return telefone;
         }
 
-        public void Update(Cliente cliente) { }
+        public void Update(Telefone telefone) { }
         public void Delete(int id) { }
-        public List<Cliente> ListAll() { return null; }
-        public List<Cliente> FindByName(string name) { return null; }
+        public List<Telefone> ListAll() { return null; }
+        public List<Telefone> FindByNumero(int numero) { return null; }
+        public void DeleteByNumero(int numero) { }
 
     }//Fim da classe
 }//Fim da interface

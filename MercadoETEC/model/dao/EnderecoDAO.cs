@@ -144,12 +144,12 @@ namespace MercadoETEC.model.dao
             //Verifica se tem dados para ser lido
             if(dr.Read())
             {
-                endereco.Id = dr.GetInt32(0);
-                endereco.Rua = dr.GetString(1);
-                endereco.Numero = dr.GetInt32(2);
-                endereco.Cep = dr.GetInt32(3);
-                endereco.Cidade = dr.GetString(4);
-                endereco.Estado = dr.GetString(5);
+                endereco.Id = dr.IsDBNull(0) == false ? dr.GetInt32(0) : 0;
+                endereco.Rua = dr.IsDBNull(1) == false ? dr.GetString(1) : null;
+                endereco.Numero = dr.IsDBNull(2) == false ? dr.GetInt32(2) : 0;
+                endereco.Cep = dr.IsDBNull(3) == false ? dr.GetInt32(3) : 0;
+                endereco.Cidade = dr.IsDBNull(4) == false ? dr.GetString(4) : null;
+                endereco.Estado = dr.IsDBNull(5) == false ? dr.GetString(5) : null;
             }
             else
             {

@@ -15,9 +15,11 @@ namespace MercadoETEC.model.domain
         //Construtor sem argumentos
         public Telefone() { }
 
-        //Construtor com argumentos
-        public Telefone(string numero)
+        /* Construtor com argumentos
+         * (id necessario no construtor, pois esse campo no banco de dados não é auto_increment)*/
+        public Telefone(int id, string numero)
         {
+            this.id = id;
             this.numero = numero;
         }
 

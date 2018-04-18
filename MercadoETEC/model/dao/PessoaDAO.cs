@@ -100,8 +100,9 @@ namespace MercadoETEC.model.dao
                 dataBase.AbrirConexao();
 
                 /* Query responsavel por buscar uma pessoa pelo seu id */
-                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa p "
+                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado, t.numero FROM Pessoa  p "
 	                            + "INNER JOIN Endereco e ON p.idEndereco = e.id "
+                                + "LEFT JOIN Telefone t ON p.id = t.id "
 		                        + "WHERE p.id = @Id;";
 
                 //Comando responsavel pela query
@@ -151,20 +152,24 @@ namespace MercadoETEC.model.dao
                 //Percorrer esse objeto até obter todos os dados
                 while(dr.Read()) 
                 {
-                    pessoa.Id = dr.GetInt32(0);
-                    pessoa.Cpf = dr.GetString(1);
-                    pessoa.Nome = dr.GetString(2);
+                    pessoa.Id = dr.IsDBNull(0) == false ? dr.GetInt32(0) : 0;
+                    pessoa.Cpf = dr.IsDBNull(1) == false ? dr.GetString(1) : null;
+                    pessoa.Nome = dr.IsDBNull(2) == false ? dr.GetString(2) : null;
 
                     //Instancia um endereço para pessoa
                     pessoa.Endereco = new Endereco();
-
+                    
                     //Seta os dados do endereço da pessoa de acordo com o dados vindo do banco
-                    pessoa.Endereco.Id = dr.GetInt32(3);
-                    pessoa.Endereco.Rua = dr.GetString(4);
-                    pessoa.Endereco.Numero = dr.GetInt32(5);
-                    pessoa.Endereco.Cep = dr.GetInt32(6);
-                    pessoa.Endereco.Cidade = dr.GetString(7);
-                    pessoa.Endereco.Estado = dr.GetString(8);
+                    pessoa.Endereco.Id = dr.IsDBNull(3) == false ? dr.GetInt32(3) : 0;
+                    pessoa.Endereco.Rua = dr.IsDBNull(4) == false ? dr.GetString(4) : null;
+                    pessoa.Endereco.Numero = dr.IsDBNull(5) == false ? dr.GetInt32(5) : 0;
+                    pessoa.Endereco.Cep = dr.IsDBNull(6) == false ? dr.GetInt32(6) : 0;
+                    pessoa.Endereco.Cidade = dr.IsDBNull(7) == false ? dr.GetString(7) : null;
+                    pessoa.Endereco.Estado = dr.IsDBNull(8) == false ? dr.GetString(8) : null;
+
+                    //Verifica se o campo no BD não é null
+                    if(!dr.IsDBNull(9))
+                        pessoa.Telefones.Add(new Telefone(pessoa.Id, dr.GetString(9)));
                 }
                 
             }
