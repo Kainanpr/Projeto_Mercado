@@ -64,6 +64,7 @@
     <Compile Include="model\domain\Pessoa.cs" />
     <Compile Include="model\domain\Produto.cs" />
     <Compile Include="model\domain\Telefone.cs" />
+    <Compile Include="model\service\ClienteService.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

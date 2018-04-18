@@ -23,7 +23,7 @@ namespace MercadoETEC.model.dao
         private PessoaDAO pessoaDAO = new PessoaDAO();
 
         /* Método responsável pela iserção do cliente no bd. */
-        public void Create(Cliente cliente)
+        public Cliente Create(Cliente cliente)
         {
             /* Guarda a pessoa no banco de dados 
              * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). 
@@ -68,6 +68,9 @@ namespace MercadoETEC.model.dao
                 //Independente se der erro ou não a conexão com o banco de dados será fechada
                 dataBase.FecharConexao();
             }
+
+            //Retorna o cliente cadastrado ja com seu id setado, ou seja, id gerado no banco
+            return cliente;
         }
 
         /* Pesquisa um cliente pelo seu ID */

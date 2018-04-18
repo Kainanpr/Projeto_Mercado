@@ -16,6 +16,9 @@ namespace MercadoETEC.model.dao
     //Implementa a interface IEnderecoDAO, sendo assim, é obrigado a implementar seus métodos abstratos
     class EnderecoDAO : IEnderecoDAO
     {
+        //Atributo responsavel por realizara conexão com o banco de dados
+        private DataBase dataBase;
+
         /* Método responsável pela iserção do endereço no bd.
          * Esse método retorna um objeto do tipo Endereco que representa o ultimo Endereco
          * inserido no banco, para que esse endereço
@@ -23,7 +26,7 @@ namespace MercadoETEC.model.dao
         public Endereco Create(Endereco endereco)
         {
             //Recupera a instancia unica do banco de dados
-            DataBase dataBase = DataBase.GetInstance();
+            dataBase = DataBase.GetInstance();
 
             //Variavel local responsável por armazenar o ultimo endereco inserido na tabela Endereco
             Endereco ultimoEndereco = new Endereco();
@@ -83,7 +86,7 @@ namespace MercadoETEC.model.dao
         public Endereco Read(int id) 
         {
             //Recupera a instancia unica do banco de dados
-            DataBase dataBase = DataBase.GetInstance();
+            dataBase = DataBase.GetInstance();
 
             //Variavel local responsável por armazenar o endereco pesquisado de acordo com seu ID
             Endereco endereco = new Endereco();

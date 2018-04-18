@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using MercadoETEC.model.domain;
 using MercadoETEC.model.conexao;
 using MercadoETEC.model.dao;
+using MercadoETEC.model.service;
 
 namespace MercadoETEC.views
 {
@@ -20,11 +21,8 @@ namespace MercadoETEC.views
     public partial class FormCliente : Form
     {
 
-        //Atributo responsavel por realizar as operações de CRUD no cliente no banco de dados
-        private ClienteDAO clienteDAO = new ClienteDAO();
-
-        //Atributo responsavel por realizar as operações de CRUD na endereco no banco de dados
-        private EnderecoDAO enderecoDAO = new EnderecoDAO();
+        //Atributo responsavel por ter as regras de negocio relacionadas ao DAO
+        private ClienteService clienteService = new ClienteService();
 
         public FormCliente()
         {
@@ -56,12 +54,10 @@ namespace MercadoETEC.views
                 //Retorna um objeto Cliente, captura os dados da view pelo metodo privado GetDTOCadastro()
                 Cliente cliente = GetDTOCadastro();
 
-                /* Grava o endereço no banco de dados e retorna o ultimo endereco inserido no banco 
-                 * ja com seu id setado para ser associado ao cliente correta */
-                cliente.Endereco = enderecoDAO.Create(cliente.Endereco);
+                /* Envia os dados do cliente para a camada de service que é responsavel
+                 * por chamar os DAOs adequados */
+                clienteService.Create(cliente);
 
-                /* Guardar o cliente no banco de dados */
-                clienteDAO.Create(cliente);
             }
             //Captura uma exceção caso o usuario digite algo que esteja incorreto
             catch(FormatException)
@@ -91,7 +87,7 @@ namespace MercadoETEC.views
                 int id = int.Parse(txtCodigo.Text);
 
                 //Encontra o cliente de acordo com seu ID
-                Cliente cliente = clienteDAO.Read(id);
+                Cliente cliente = clienteService.Read(id);
 
                 //Chama o metodo auxiliar para atualizar a view
                 SetDTO(cliente);

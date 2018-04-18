@@ -12,7 +12,7 @@ namespace MercadoETEC.model.dao.interfaceDAO
      *terá que implementar seus metodos abstratos */
     interface IClienteDAO
     {
-        void Create(Cliente cliente);
+        Cliente Create(Cliente cliente);
         Cliente Read(int id);
         void Update(Cliente cliente);
         void Delete(int id);
