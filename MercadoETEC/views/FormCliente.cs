@@ -112,34 +112,16 @@ namespace MercadoETEC.views
 
         private void btnAlterar_Click(object sender, EventArgs e)
         {
-            //Irá tentar encontrar um cliente
-            try
-            {
-                //Captura o id digitado pelo usuario para pesquisar
-                int id = int.Parse(txtCodigo.Text);
+            //Captura o id digitado pelo usuario para pesquisar
+            int id = int.Parse(txtCodigo.Text);
 
-                /*Encontra o cliente de acordo com seu ID 
-                 *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
-                Cliente cliente = clienteService.Read(id);
+            /*Encontra o cliente de acordo com seu ID 
+             *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
+            Cliente cliente = clienteService.Read(id);
 
-                //Chama o metodo auxiliar para atualizar a view
-                SetDTO(cliente);
+            cliente.Endereco.Id = 8;
 
-            }
-            //Captura uma exceção caso o usuario digite algo que não seja números inteiros
-            catch (FormatException)
-            {
-                MessageBox.Show("Erro: Digite apenas números");
-                LimparCamposGeral();
-            }
-            //Caso não encontre nenhum cliente irá recuperar a exceção que eu lancei
-            catch (Exception ex)
-            {
-                //Recupera a exceção com o erro que eu instanciei
-                MessageBox.Show("Erro: " + ex.Message);
-                LimparCamposGeral();
-            }
-
+            clienteService.update(cliente);
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -233,7 +215,12 @@ namespace MercadoETEC.views
             txtCpf.Text = cliente.Cpf;
             txtEmail.Text = cliente.Email;
 
-            txtTelefone.Text = cliente.Telefones[0].Numero;
+            //Verifica se o usuario possui telefones na lista
+            if (cliente.Telefones.Count > 0)
+                txtTelefone.Text = cliente.Telefones[0].Numero;
+            //Caso ele nao tenha telefone o campo deve estar em braco
+            else
+                txtTelefone.Text = "";
 
             txtEndereco.Text = cliente.Endereco.Rua;
             txtNumero.Text = cliente.Endereco.Numero.ToString();

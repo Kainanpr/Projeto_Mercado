@@ -14,6 +14,7 @@ namespace MercadoETEC.model.dao.interfaceDAO
     {
         Cliente Create(Cliente cliente);
         Cliente Read(int id);
+        Cliente FindByCpf(string cpf);
         void Update(Cliente cliente);
         void Delete(int id);
         List<Cliente> ListAll();

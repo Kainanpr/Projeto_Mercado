@@ -101,7 +101,7 @@ namespace MercadoETEC.model.dao
 
                 /* Query responsavel por buscar uma pessoa pelo seu id */
                 string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado, t.numero FROM Pessoa  p "
-	                            + "INNER JOIN Endereco e ON p.idEndereco = e.id "
+	                            + "LEFT JOIN Endereco e ON p.idEndereco = e.id "
                                 + "LEFT JOIN Telefone t ON p.id = t.id "
 		                        + "WHERE p.id = @Id;";
 
@@ -135,10 +135,56 @@ namespace MercadoETEC.model.dao
             /* Retorna a pessoa pesquisada de acordo com seu ID */
             return pessoa;
         }
+        
+        public void Update<T>(T pessoa) where T : Pessoa 
+        {
+            //Recupera a instancia unica do banco de dados
+            dataBase = DataBase.GetInstance();
 
-        public void Update(Pessoa pessoa) { }
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                /* Query responsavel por atualizar a pessoa na tabela pessoa do banco */
+                string query = "UPDATE Pessoa SET cpf = @Cpf, nome = @Nome, idEndereco = @IdEndereco WHERE id = @Id;";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Adição de parametros e espeficicação dos tipos
+                command.Parameters.Add("@Cpf", MySqlDbType.String);
+                command.Parameters.Add("@Nome", MySqlDbType.String);
+                command.Parameters.Add("@IdEndereco", MySqlDbType.Int32);
+                command.Parameters.Add("@Id", MySqlDbType.Int32);
+
+                //Atribuição de valores
+                command.Parameters["@Cpf"].Value = pessoa.Cpf;
+                command.Parameters["@Nome"].Value = pessoa.Nome;
+                command.Parameters["@IdEndereco"].Value = pessoa.Endereco.Id;
+                command.Parameters["@Id"].Value = pessoa.Id;
+
+                //Executar instrução sem retorno de dados
+                command.ExecuteNonQuery();
+
+                //MessageBox.Show("Conexão com banco de dados efetuada com sucesso");
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+            }
+            finally
+            {
+                //Independente se der erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+        }
+
         public void Delete(int id) { }
         public List<Pessoa> ListAll() { return null; }
+        public T FindByCpf<T>(string cpf) where T : Pessoa { return null; }
         public List<Pessoa> FindByName(string name) { return null; }
 
         /* Metodo auxiliar responsavel por setar os dados da pessoa vindo do dados do banco

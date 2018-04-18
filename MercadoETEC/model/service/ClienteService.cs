@@ -37,8 +37,9 @@ namespace MercadoETEC.model.service
                 //Associa o id do telefone com o id do cliente
                 tel.Id = cliente.Id;
 
-                //Grava o telefone do criente no banco
-                telefoneDAO.Create(tel);
+                //Grava o telefone do cliente no banco e verifica se o numero é null
+                if(tel.Numero != null)
+                    telefoneDAO.Create(tel);
             }
 
             /* Retorna o ultimo Cliente cadastrado no banco ja com seu id setado. 
@@ -52,6 +53,11 @@ namespace MercadoETEC.model.service
             Cliente cliente = clienteDAO.Read(id);
 
             return cliente;
+        }
+
+        public void update(Cliente cliente)
+        {
+            clienteDAO.Update(cliente);
         }
 
     }

@@ -132,7 +132,54 @@ namespace MercadoETEC.model.dao
             return cliente;
         }
 
-        public void Update(Cliente cliente) { }
+        public void Update(Cliente cliente) 
+        {
+            /* Guarda a pessoa no banco de dados 
+             * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). 
+             * (Logo apos seta o Id do cliente com o id da pessoa vinda do banco de dados) */
+            pessoaDAO.Update<Cliente>(cliente);
+
+            //Recupera a instancia unica do banco de dados
+            dataBase = DataBase.GetInstance();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                /* Query responsavel por atualizar o cliente na tabela cliente do banco */
+                string query = "UPDATE Cliente SET email = @Email WHERE id = @Id;";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Adição de parametros e espeficicação dos tipos
+                command.Parameters.Add("@Id", MySqlDbType.Int32);
+                command.Parameters.Add("@Email", MySqlDbType.String);
+
+                //Atribuição de valores
+                command.Parameters["@Id"].Value = cliente.Id;
+                command.Parameters["@Email"].Value = cliente.Email;
+
+                //Executar instrução sem retorno de dados
+                command.ExecuteNonQuery();
+
+                //MessageBox.Show("Conexão com banco de dados efetuada com sucesso");
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+            }
+            finally
+            {
+                //Independente se der erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+        }
+
+        public Cliente FindByCpf(string cpf) { return null; }
         public void Delete(int id) { }
         public List<Cliente> ListAll() { return null; }
         public List<Cliente> FindByName(string name) { return null; }
