@@ -17,17 +17,22 @@ namespace MercadoETEC.model.dao
     class PessoaDAO : IPessoaDAO
     {
 
+        //Atributo responsavel por realizara conexão com o banco de dados
+        private DataBase dataBase;
+
         /* Método responsável pela iserção da pessoa no bd.
-         * Esse método retorna um objeto do tipo Pessoa que representa a ultima Pessoa
+         * Esse método retorna um objeto de tipo Generico(qualquer tipo que extenda pessoa) que representa a ultima Pessoa
          * inserido no banco, para que essa Pessoa
          * possa ser associado a um funcionado ou a um cliente*/
-        public Pessoa Create(Pessoa pessoa) 
+        public T Create<T> (T pessoa) where T : Pessoa
         {
             //Recupera a instancia unica do banco de dados
-            DataBase dataBase = DataBase.GetInstance();
+            dataBase = DataBase.GetInstance();
 
-            //Variavel local responsável por armazenar a ultima pessoa inserida na tabela Pessoa.
-            Pessoa ultimaPessoa = new Pessoa();
+            /* Variavel local responsável por armazenar a ultima pessoa inserida na tabela Pessoa. 
+             * (A palavra new so é usada em tipos concretos) 
+             * (Activador é uma classe que deixa criar uma instancia de tipo generico) */
+            T ultimaPessoa = Activator.CreateInstance<T>();
 
             try
             {
@@ -73,19 +78,21 @@ namespace MercadoETEC.model.dao
             }
 
             /* Retorna a ultima pessoa inserido na tabela Pessoa 
-             * ppossa ser associado a um funcionado ou a um cliente
+             * para que possa ser associado a um funcionado ou a um cliente
              * (Esse retorno se torna necessario para controlar os ids da tabela, pois é um campo auto_increment) */
             return ultimaPessoa;
         }
 
-        /* Pesquisa uma pessoa pelo seu ID */
-        public Pessoa Read(int id)
+        /* Pesquisa uma pessoa pelo seu ID (Metodo generico)*/
+        public T Read<T>(int id) where T : Pessoa
         {
             //Recupera a instancia unica do banco de dados
-            DataBase dataBase = DataBase.GetInstance();
+            dataBase = DataBase.GetInstance();
 
-            //Variavel local responsável por armazenar o endereco pesquisado de acordo com seu ID
-            Pessoa pessoa = new Pessoa();
+            /* Variavel local responsável por armazenar o endereco pesquisado de acordo com seu ID
+             * (A palavra new so é usada em tipos concretos) 
+             * (Activador é uma classe que deixa criar uma instancia de tipo generico) */
+            T pessoa = Activator.CreateInstance<T>();
 
             try
             {
@@ -93,7 +100,9 @@ namespace MercadoETEC.model.dao
                 dataBase.AbrirConexao();
 
                 /* Query responsavel por buscar uma pessoa pelo seu id */
-                string query = "SELECT id, cpf, nome, idEndereco FROM Pessoa WHERE id = @Id;";
+                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa p "
+	                            + "INNER JOIN Endereco e ON p.idEndereco = e.id "
+		                        + "WHERE p.id = @Id;";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -120,16 +129,7 @@ namespace MercadoETEC.model.dao
             {
                 //Independente se ocorrer erro ou não a conexão com o banco de dados será fechada
                 dataBase.FecharConexao();
-            }
-
-
-            
-            /* Chamar o metodo auxiliar para carregar os dados do 
-            * endereço da pessoa de acordo com o id do endereço. 
-            * Apenas chama o metodo se caso a pessoa possui um endereço */
-            if(pessoa.Endereco != null)
-                pessoa.Endereco = setEndereco(pessoa);
-            
+            }        
 
             /* Retorna a pessoa pesquisada de acordo com seu ID */
             return pessoa;
@@ -140,22 +140,33 @@ namespace MercadoETEC.model.dao
         public List<Pessoa> ListAll() { return null; }
         public List<Pessoa> FindByName(string name) { return null; }
 
-        //Metodo auxiliar para preencher o endereço com os dados do banco
-        private Pessoa setPessoa(MySqlDataReader dr, Pessoa pessoa)
+        /* Metodo auxiliar responsavel por setar os dados da pessoa vindo do dados do banco
+         * (Método generico) */
+        private T setPessoa<T>(MySqlDataReader dr, T pessoa) where T : Pessoa
         {
 
             //Verifica se tem dados para ser lido
-            if (dr.Read())
+            if (dr.HasRows)
             {
-                pessoa.Id = dr.GetInt32(0);
-                pessoa.Cpf = dr.GetString(1);
-                pessoa.Nome = dr.GetString(2);
+                //Percorrer esse objeto até obter todos os dados
+                while(dr.Read()) 
+                {
+                    pessoa.Id = dr.GetInt32(0);
+                    pessoa.Cpf = dr.GetString(1);
+                    pessoa.Nome = dr.GetString(2);
 
-                //Instancia um endereço para pessoa
-                pessoa.Endereco = new Endereco();
+                    //Instancia um endereço para pessoa
+                    pessoa.Endereco = new Endereco();
 
-                //Seta o id do endereço da pessoa de acordo com o dado da coluna idEndereco vindo do banco
-                pessoa.Endereco.Id = dr.GetInt32(3);
+                    //Seta os dados do endereço da pessoa de acordo com o dados vindo do banco
+                    pessoa.Endereco.Id = dr.GetInt32(3);
+                    pessoa.Endereco.Rua = dr.GetString(4);
+                    pessoa.Endereco.Numero = dr.GetInt32(5);
+                    pessoa.Endereco.Cep = dr.GetInt32(6);
+                    pessoa.Endereco.Cidade = dr.GetString(7);
+                    pessoa.Endereco.Estado = dr.GetString(8);
+                }
+                
             }
             else
             {
@@ -165,18 +176,6 @@ namespace MercadoETEC.model.dao
             }
                 
             return pessoa;
-        }
-
-        //Metodo auxiliar para preencher o endereço com os dados do banco
-        private Endereco setEndereco(Pessoa pessoa)
-        {
-            //Variavel local responsavel por realizar as operações de CRUD no endereço no banco de dados
-            EnderecoDAO enderecoDAO = new EnderecoDAO();
-
-            //Seta o endereco da pessoa de acordo com o id de seu endereço(Seta nome da rua, cidade, estado etc)
-            Endereco endereco = enderecoDAO.Read(pessoa.Endereco.Id);
-
-            return endereco;
         }
 
     }//Fim da classe

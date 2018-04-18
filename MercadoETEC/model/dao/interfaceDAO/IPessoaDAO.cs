@@ -12,8 +12,8 @@ namespace MercadoETEC.model.dao.interfaceDAO
      *terá que implementar seus metodos abstratos */
     interface IPessoaDAO
     {
-        Pessoa Create(Pessoa pessoa);
-        Pessoa Read(int id);
+        T Create<T> (T pessoa) where T : Pessoa;
+        T Read<T>(int id) where T : Pessoa;
         void Update(Pessoa pessoa);
         void Delete(int id);
         List<Pessoa> ListAll();

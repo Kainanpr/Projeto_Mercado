@@ -16,12 +16,22 @@ namespace MercadoETEC.model.dao
     //Implementa a interface IClienteDAO, sendo assim, é obrigado a implementar seus métodos abstratos
     class ClienteDAO : IClienteDAO
     {
+        //Atributo responsavel por realizara conexão com o banco de dados
+        private DataBase dataBase;
+
+        //Atributo responsavel por realizar as operações de CRUD na pessoa no banco de dados
+        private PessoaDAO pessoaDAO = new PessoaDAO();
 
         /* Método responsável pela iserção do cliente no bd. */
         public void Create(Cliente cliente)
         {
+            /* Guarda a pessoa no banco de dados 
+             * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). 
+             * (Logo apos seta o Id do cliente com o id da pessoa vinda do banco de dados) */
+            cliente.Id = pessoaDAO.Create<Cliente>(cliente).Id;
+
             //Recupera a instancia unica do banco de dados
-            DataBase dataBase = DataBase.GetInstance();
+            dataBase = DataBase.GetInstance();
 
             try
             {
@@ -64,22 +74,11 @@ namespace MercadoETEC.model.dao
         public Cliente Read(int id)
         {
             //Recupera a instancia unica do banco de dados
-            DataBase dataBase = DataBase.GetInstance();
-
-            //Variavel local responsavel por realizar as operações de CRUD na pessoa no banco de dados
-            PessoaDAO pessoaDAO = new PessoaDAO();
+            dataBase = DataBase.GetInstance();
 
             //Variavel local responsável por armazenar o cliente pesquisado de acordo com seu ID
-            Cliente cliente = new Cliente();
-
-            //(Cliente É UMA Pessoa) Busca a pessoa no banco de dados
-            Pessoa pessoa = pessoaDAO.Read(id);
-
-            //(Cliente É UMA Pessoa) Seta o cliente de acordo com os dados da tabela Pessoa
-            cliente.Id = pessoa.Id;
-            cliente.Nome = pessoa.Nome;
-            cliente.Cpf = pessoa.Cpf;
-            cliente.Endereco = pessoa.Endereco;
+            //Chama o metodo generico da classe pessoaDAO
+            Cliente cliente = pessoaDAO.Read<Cliente>(id);
 
             try
             {

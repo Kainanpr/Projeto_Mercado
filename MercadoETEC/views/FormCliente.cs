@@ -20,13 +20,10 @@ namespace MercadoETEC.views
     public partial class FormCliente : Form
     {
 
-        //Atributo responsavel por inserir uma pessoa no banco de dados
-        private PessoaDAO pessoaDAO = new PessoaDAO();
-
-        //Atributo responsavel por inserir um cliente no banco de dados
+        //Atributo responsavel por realizar as operações de CRUD no cliente no banco de dados
         private ClienteDAO clienteDAO = new ClienteDAO();
 
-        //Atributo responsavel por inserir um endereco no banco de dados
+        //Atributo responsavel por realizar as operações de CRUD na endereco no banco de dados
         private EnderecoDAO enderecoDAO = new EnderecoDAO();
 
         public FormCliente()
@@ -62,14 +59,6 @@ namespace MercadoETEC.views
                 /* Grava o endereço no banco de dados e retorna o ultimo endereco inserido no banco 
                  * ja com seu id setado para ser associado ao cliente correta */
                 cliente.Endereco = enderecoDAO.Create(cliente.Endereco);
-
-                /* Guarda a pessoa no banco de dados 
-                 * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). */
-                Pessoa pessoa = pessoaDAO.Create(cliente);
-
-                /* Associa o id do cliente ao id da pessoa retornada do banco
-                 * Esse passo é necessario devido a herança no C# e a especialização no banco  */
-                cliente.Id = pessoa.Id;
 
                 /* Guardar o cliente no banco de dados */
                 clienteDAO.Create(cliente);
