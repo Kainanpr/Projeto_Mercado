@@ -13,6 +13,8 @@ using MercadoETEC.model.conexao;
 using MercadoETEC.model.dao;
 using MercadoETEC.model.service;
 
+using MercadoETEC.model.service.exception;
+
 namespace MercadoETEC.views
 {
 
@@ -100,10 +102,10 @@ namespace MercadoETEC.views
                 MessageBox.Show("Erro: Digite apenas números");
                 LimparCamposGeral();
             }
-            //Caso não encontre nenhum cliente irá recuperar a exceção que eu lancei
-            catch(Exception ex)
+            //Caso não encontre nenhum cliente irá recuperar a exceção que nos lançamos
+            catch(ObjetoNotFoundException ex)
             {
-                //Recupera a exceção com o erro que eu instanciei
+                //Recupera a exceção com o erro que nos instanciamos
                 MessageBox.Show("Erro: " + ex.Message);
                 LimparCamposGeral();
             }
@@ -118,8 +120,11 @@ namespace MercadoETEC.views
             /*Encontra o cliente de acordo com seu ID 
              *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
             Cliente cliente = clienteService.Read(id);
+    
 
             clienteService.Delete(cliente);
+
+            //clienteService.Delete(cliente);
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -138,42 +143,42 @@ namespace MercadoETEC.views
         private void AbilitarCamposGeral()
         {
             txtNome.Enabled = true;
-            txtCpf.Enabled = true;
+            txtTelefone.Enabled = true;
             txtCidade.Enabled = true;
             txtCep.Enabled = true;
-            txtEmail.Enabled = true;
             txtEndereco.Enabled = true;
+            txtEmail.Enabled = true;
             txtNumero.Enabled = true;
             txtEstado.Enabled = true;
-            txtTelefone.Enabled = true;
+            txtCpf.Enabled = true;
         }
 
         private void DesabilitarCamposGeral()
         {
             txtCodigo.Enabled = false;
             txtNome.Enabled = false;
-            txtCpf.Enabled = false;
+            txtTelefone.Enabled = false;
             txtCidade.Enabled = false;
             txtCep.Enabled = false;
-            txtEmail.Enabled = false;
             txtEndereco.Enabled = false;
+            txtEmail.Enabled = false;
             txtNumero.Enabled = false;
             txtEstado.Enabled = false;
-            txtTelefone.Enabled = false;
+            txtCpf.Enabled = false;
         }
 
         private void LimparCamposGeral()
         {
             txtCodigo.Clear();
             txtNome.Clear();
-            txtCpf.Clear();
+            txtTelefone.Clear();
             txtCidade.Clear();
             txtCep.Clear();
-            txtEmail.Clear();
             txtEndereco.Clear();
+            txtEmail.Clear();
             txtNumero.Clear();
             txtEstado.Clear();
-            txtTelefone.Clear();
+            txtCpf.Clear();
         }
 
         /* Metodos auxiliares (DTO). 
@@ -182,14 +187,14 @@ namespace MercadoETEC.views
         {
             Cliente cliente = new Cliente();
             cliente.Nome = txtNome.Text == "" ? null : txtNome.Text;
-            cliente.Cpf = txtCpf.Text == "" ? null : txtCpf.Text;
-            cliente.Email = txtEmail.Text == "" ? null : txtEmail.Text;
+            cliente.Cpf = txtTelefone.Text == "" ? null : txtTelefone.Text;
+            cliente.Email = txtEndereco.Text == "" ? null : txtEndereco.Text;
 
             Telefone tel = new Telefone();
-            tel.Numero = txtTelefone.Text == "" ? null : txtTelefone.Text;
+            tel.Numero = txtCpf.Text == "" ? null : txtCpf.Text;
 
             Endereco end = new Endereco();
-            end.Rua = txtEndereco.Text == "" ? null : txtEndereco.Text;
+            end.Rua = txtEmail.Text == "" ? null : txtEmail.Text;
             end.Numero = int.Parse(txtNumero.Text);
             end.Cep = int.Parse(txtCep.Text);
             end.Cidade = txtCidade.Text == "" ? null : txtCidade.Text;
@@ -210,22 +215,36 @@ namespace MercadoETEC.views
         {
 
             txtNome.Text = cliente.Nome;
-            txtCpf.Text = cliente.Cpf;
-            txtEmail.Text = cliente.Email;
+            txtTelefone.Text = cliente.Cpf;
+            txtEndereco.Text = cliente.Email;
 
-            //Verifica se o usuario possui telefones na lista
+            //Verifica se o usuario possui telefones na lista (nessa caso queremos mostrar apenas o 1º telefone)
             if (cliente.Telefones.Count > 0)
-                txtTelefone.Text = cliente.Telefones[0].Numero;
-            //Caso ele nao tenha telefone o campo deve estar em braco
+                txtCpf.Text = cliente.Telefones[0].Numero;
+            //Caso ele nao tenha telefone cadastrado o campo deve estar em braco
             else
-                txtTelefone.Text = "";
+                txtCpf.Text = "";
 
-            txtEndereco.Text = cliente.Endereco.Rua;
-            txtNumero.Text = cliente.Endereco.Numero.ToString();
-            txtCep.Text = cliente.Endereco.Cep.ToString();
-            txtCidade.Text = cliente.Endereco.Cidade ;
-            txtEstado.Text = cliente.Endereco.Estado;
+
+            //Verifica se o cliente possui endereço cadastrado
+            if(cliente.Endereco != null)
+            {
+                txtEmail.Text = cliente.Endereco.Rua;
+                txtNumero.Text = cliente.Endereco.Numero == 0 ? "" : cliente.Endereco.Numero.ToString();
+                txtCep.Text = cliente.Endereco.Cep == 0 ? "" : cliente.Endereco.Cep.ToString();
+                txtCidade.Text = cliente.Endereco.Cidade;
+                txtEstado.Text = cliente.Endereco.Estado;
+            }
+            //Caso ele nao tenha endereco cadastrado os campos devem estar em braco
+            else
+            {
+                txtEmail.Text = "";
+                txtNumero.Text = "";
+                txtCep.Text = "";
+                txtCidade.Text = "";
+                txtEstado.Text = "";
+            }
         }
 
-    }
-}
+    }//Fim da classe
+}//Fim da namespace

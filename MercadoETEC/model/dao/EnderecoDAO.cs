@@ -69,6 +69,9 @@ namespace MercadoETEC.model.dao
             {
                 //Mostrar o erro na tela
                 MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
             }
             finally
             {
@@ -119,6 +122,9 @@ namespace MercadoETEC.model.dao
             {
                 //Mostrar o erro na tela
                 MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
             }
             finally
             {
@@ -156,9 +162,13 @@ namespace MercadoETEC.model.dao
                 command.Parameters.Add("@Id", MySqlDbType.Int32);
 
                 //Atribuição de valores
+                if (endereco.Numero != 0)
+                    command.Parameters["@Numero"].Value = endereco.Numero;
+
+                if (endereco.Cep != 0)
+                    command.Parameters["@Cep"].Value = endereco.Cep;
+
                 command.Parameters["@Rua"].Value = endereco.Rua;
-                command.Parameters["@Numero"].Value = endereco.Numero;
-                command.Parameters["@Cep"].Value = endereco.Cep;
                 command.Parameters["@Cidade"].Value = endereco.Cidade;
                 command.Parameters["@Estado"].Value = endereco.Estado;
                 command.Parameters["@Id"].Value = endereco.Id;
@@ -238,9 +248,8 @@ namespace MercadoETEC.model.dao
             }
             else
             {
-                /*Caso não tenha nenhum dado para ser lido irá lançar uma 
-                 *exceção para ser recuperada posteriormente no controler */
-                throw new Exception("Endereço não encontrado");
+                //Caso não encontre nenhuma endereço retorna null
+                return null;
             }
 
             return endereco;

@@ -42,7 +42,7 @@ namespace MercadoETEC.model.dao
                 /* Utilizamos uma Stored Procedure para retornar a ultima pessoa inserida na tabela Pessoa. 
                  * Essa procedure foi feita pelo fato de o id ser auto_increment, sendo assim, sem o uso de procedure
                  * não teriamos o controle de qual id foi inserido por ultimo. */
-                string query = "CALL sp_pessoa_insert (@Cpf, @Nome, @idEndereco)";
+                string query = "CALL sp_pessoa_insert (@Cpf, @Nome, @IdEndereco)";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -50,12 +50,12 @@ namespace MercadoETEC.model.dao
                 //Adição de parametros e espeficicação dos tipos
                 command.Parameters.Add("@Cpf", MySqlDbType.String);
                 command.Parameters.Add("@Nome", MySqlDbType.String);
-                command.Parameters.Add("@idEndereco", MySqlDbType.Int32);
+                command.Parameters.Add("@IdEndereco", MySqlDbType.Int32);
 
                 //Atribuição de valores
                 command.Parameters["@Cpf"].Value = pessoa.Cpf;
                 command.Parameters["@Nome"].Value = pessoa.Nome;
-                command.Parameters["@idEndereco"].Value = pessoa.Endereco.Id;
+                command.Parameters["@IdEndereco"].Value = pessoa.Endereco.Id;
 
                 //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
                 MySqlDataReader dr = command.ExecuteReader();
@@ -70,6 +70,9 @@ namespace MercadoETEC.model.dao
             {
                 //Mostrar o erro na tela
                 MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
             }
             finally
             {
@@ -100,10 +103,7 @@ namespace MercadoETEC.model.dao
                 dataBase.AbrirConexao();
 
                 /* Query responsavel por buscar uma pessoa pelo seu id */
-                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado, t.numero FROM Pessoa  p "
-	                            + "LEFT JOIN Endereco e ON p.idEndereco = e.id "
-                                + "LEFT JOIN Telefone t ON p.id = t.id "
-		                        + "WHERE p.id = @Id;";
+                string query = "SELECT * FROM Pessoa WHERE id = @Id;";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -125,6 +125,9 @@ namespace MercadoETEC.model.dao
             {
                 //Mostrar o erro na tela
                 MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
             }
             finally
             {
@@ -147,7 +150,7 @@ namespace MercadoETEC.model.dao
                 dataBase.AbrirConexao();
 
                 /* Query responsavel por atualizar a pessoa na tabela pessoa do banco */
-                string query = "UPDATE Pessoa SET cpf = @Cpf, nome = @Nome, idEndereco = @IdEndereco WHERE id = @Id;";
+                string query = "UPDATE Pessoa SET cpf = @Cpf, nome = @Nome WHERE id = @Id;";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -155,13 +158,11 @@ namespace MercadoETEC.model.dao
                 //Adição de parametros e espeficicação dos tipos
                 command.Parameters.Add("@Cpf", MySqlDbType.String);
                 command.Parameters.Add("@Nome", MySqlDbType.String);
-                command.Parameters.Add("@IdEndereco", MySqlDbType.Int32);
                 command.Parameters.Add("@Id", MySqlDbType.Int32);
 
                 //Atribuição de valores
                 command.Parameters["@Cpf"].Value = pessoa.Cpf;
                 command.Parameters["@Nome"].Value = pessoa.Nome;
-                command.Parameters["@IdEndereco"].Value = pessoa.Endereco.Id;
                 command.Parameters["@Id"].Value = pessoa.Id;
 
                 //Executar instrução sem retorno de dados
@@ -246,23 +247,13 @@ namespace MercadoETEC.model.dao
                     
                     //Seta os dados do endereço da pessoa de acordo com o dados vindo do banco
                     pessoa.Endereco.Id = dr.IsDBNull(3) == false ? dr.GetInt32(3) : 0;
-                    pessoa.Endereco.Rua = dr.IsDBNull(4) == false ? dr.GetString(4) : null;
-                    pessoa.Endereco.Numero = dr.IsDBNull(5) == false ? dr.GetInt32(5) : 0;
-                    pessoa.Endereco.Cep = dr.IsDBNull(6) == false ? dr.GetInt32(6) : 0;
-                    pessoa.Endereco.Cidade = dr.IsDBNull(7) == false ? dr.GetString(7) : null;
-                    pessoa.Endereco.Estado = dr.IsDBNull(8) == false ? dr.GetString(8) : null;
-
-                    //Verifica se o campo no BD não é null
-                    if(!dr.IsDBNull(9))
-                        pessoa.Telefones.Add(new Telefone(pessoa.Id, dr.GetString(9)));
                 }
                 
             }
             else
             {
-                /*Caso não tenha nenhum dado para ser lido irá lançar uma 
-                 *exceção para ser recuperada posteriormente no controler */
-                throw new Exception("Pessoa não encontrada");
+                //Caso não encontre nenhuma pessoa retorna null
+                return null;
             }
                 
             return pessoa;

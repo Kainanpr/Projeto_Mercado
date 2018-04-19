@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using MercadoETEC.model.dao;
 using MercadoETEC.model.domain;
 
+using MercadoETEC.model.service.exception;
+
 namespace MercadoETEC.model.service
 {
     /* Classe responsavel por ter as regras de negócio relacionadas ao DAO 
@@ -24,23 +26,50 @@ namespace MercadoETEC.model.service
 
         public Cliente Create(Cliente cliente)
         {
-            /* Grava o endereço do cliente no banco de dados e retorna o ultimo endereco inserido no banco 
-             * ja com seu id setado para ser associado ao cliente correto */
-            cliente.Endereco = enderecoDAO.Create(cliente.Endereco);
-
-            /* Guardar o cliente no banco de dados e retorna o ultimo cliente inserido ja com seu id setado*/
-            cliente.Id = clienteDAO.Create(cliente).Id;
-
-            /* Guardar os telefones do cliente no banco de dados */
-            foreach(Telefone tel in cliente.Telefones)
+            /* Verifica se o cliente possui um endereco. 
+               Para registrar uma pessoa no banco é necessario ter um endereço cadastrado primeiro  
+               porque na tabela pessoa possui um atributo idEndereco como chave estrangeira */
+            if(cliente.Endereco != null)
             {
-                //Associa o id do telefone com o id do cliente
-                tel.Id = cliente.Id;
 
-                //Grava o telefone do cliente no banco e verifica se o numero é null
-                if(tel.Numero != null)
-                    telefoneDAO.Create(tel);
+
+                /* Grava o endereço do cliente no banco de dados e retorna o ultimo endereco inserido no banco 
+                 * ja com seu id setado para ser associado ao cliente correto */
+                cliente.Endereco = enderecoDAO.Create(cliente.Endereco);
+
+                /* Guardar o cliente no banco de dados e retorna o ultimo cliente inserido ja com seu id setado. */
+                /* Caso ocorra algum erro na gravação da pessoa o metodo retorna null. */
+                /* Pode ocorrer problemas de UNIQUE na coluna CPF e NOT NULL na coluna NOME. */
+                Cliente ultimoClienteInseridoBD = clienteDAO.Create(cliente);
+
+                //Verifica se o cliente é null, se retornar null não foi salvo no banco de dados
+                if (ultimoClienteInseridoBD == null)
+                {
+                    /* Se ocorrer problema na gravação do cliente devemos excluir
+                     * o endereço que foi gravado anteriormente, pois o endereço 
+                     * não foi asocciado ao cliente correto */
+                    enderecoDAO.Delete(cliente.Endereco.Id);
+                }
+                else
+                {
+                    /* Caso não retornar null associa o Id do ultimo cliente inserido
+                     * com o cliente que foi enviado para o metodo */
+                    cliente.Id = ultimoClienteInseridoBD.Id;
+
+                    /* Guardar os telefones do cliente no banco de dados */
+                    foreach (Telefone tel in cliente.Telefones)
+                    {
+                        //Associa o id do telefone com o id do cliente
+                        tel.Id = cliente.Id;
+
+                        //Grava o telefone do cliente no banco e verifica se o numero é null
+                        if (tel.Numero != null)
+                            telefoneDAO.Create(tel);
+                    }
+                }
+
             }
+
 
             /* Retorna o ultimo Cliente cadastrado no banco ja com seu id setado. 
              * Talves esse id possa ser necessario posteriormente para alguma associação */
@@ -52,6 +81,23 @@ namespace MercadoETEC.model.service
             //Delega a pesquisa do cliente para o DAO correspondente
             Cliente cliente = clienteDAO.Read(id);
 
+            //Caso não encontre nenhum cliente será lançado a exceção que nos criamos
+            if (cliente == null)
+                throw new ObjetoNotFoundException("Cliente não encontrado");
+
+            /* Delega a pesquisa do endereco para o DAO correspondente 
+             * caso nao encontrar será retornado null*/
+            cliente.Endereco = enderecoDAO.Read(cliente.Endereco.Id);
+
+            /* Delega a pesquisa do telefone para o DAO correspondente 
+             * caso nao encontrar será retornado null*/
+            Telefone tel = telefoneDAO.Read(cliente.Id);
+
+            /* Caso não encontre nenhum telefone não será necessario lançar uma exceção, 
+             * apenas não adicionamos na sua lista de telefones */
+            if(tel != null)
+                cliente.Telefones.Add(tel);
+
             return cliente;
         }
 
@@ -60,8 +106,9 @@ namespace MercadoETEC.model.service
             //Atualiza o cliente
             clienteDAO.Update(cliente);
 
-            //Atualiza o endereço
-            enderecoDAO.Update(cliente.Endereco);
+            //Atualiza o endereço (Verifica se a pessoa possui um endereco)
+            if(cliente.Endereco != null)
+                enderecoDAO.Update(cliente.Endereco);
 
             //Verifica se o cliente tem pelo menos 1 telefone ou mais
             if(cliente.Telefones.Count > 0)
@@ -79,8 +126,9 @@ namespace MercadoETEC.model.service
             //Delete o cliente do banco
             clienteDAO.Delete(cliente.Id);
 
-            //Deleta o endereco do banco
-            enderecoDAO.Delete(cliente.Endereco.Id);
+            //Verifica se o cliente tem endereço e deleta o endereco do banco
+            if(cliente.Endereco != null)
+                enderecoDAO.Delete(cliente.Endereco.Id);
         }
 
     }//Fim da classe

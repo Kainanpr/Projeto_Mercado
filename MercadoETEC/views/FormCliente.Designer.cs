@@ -44,11 +44,11 @@
             this.label10 = new System.Windows.Forms.Label();
             this.txtCep = new System.Windows.Forms.TextBox();
             this.txtNumero = new System.Windows.Forms.TextBox();
-            this.txtEmail = new System.Windows.Forms.TextBox();
             this.txtEndereco = new System.Windows.Forms.TextBox();
-            this.txtCpf = new System.Windows.Forms.TextBox();
-            this.txtNome = new System.Windows.Forms.TextBox();
+            this.txtEmail = new System.Windows.Forms.TextBox();
             this.txtTelefone = new System.Windows.Forms.TextBox();
+            this.txtNome = new System.Windows.Forms.TextBox();
+            this.txtCpf = new System.Windows.Forms.TextBox();
             this.txtCodigo = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -176,11 +176,11 @@
             this.panel2.Controls.Add(this.label10);
             this.panel2.Controls.Add(this.txtCep);
             this.panel2.Controls.Add(this.txtNumero);
-            this.panel2.Controls.Add(this.txtEmail);
             this.panel2.Controls.Add(this.txtEndereco);
-            this.panel2.Controls.Add(this.txtCpf);
-            this.panel2.Controls.Add(this.txtNome);
+            this.panel2.Controls.Add(this.txtEmail);
             this.panel2.Controls.Add(this.txtTelefone);
+            this.panel2.Controls.Add(this.txtNome);
+            this.panel2.Controls.Add(this.txtCpf);
             this.panel2.Controls.Add(this.txtCodigo);
             this.panel2.Controls.Add(this.label9);
             this.panel2.Controls.Add(this.label8);
@@ -247,29 +247,29 @@
             this.txtNumero.Size = new System.Drawing.Size(61, 20);
             this.txtNumero.TabIndex = 13;
             // 
-            // txtEmail
-            // 
-            this.txtEmail.Enabled = false;
-            this.txtEmail.Location = new System.Drawing.Point(318, 167);
-            this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(249, 20);
-            this.txtEmail.TabIndex = 12;
-            // 
             // txtEndereco
             // 
             this.txtEndereco.Enabled = false;
             this.txtEndereco.Location = new System.Drawing.Point(21, 232);
             this.txtEndereco.Name = "txtEndereco";
             this.txtEndereco.Size = new System.Drawing.Size(221, 20);
-            this.txtEndereco.TabIndex = 11;
+            this.txtEndereco.TabIndex = 12;
             // 
-            // txtCpf
+            // txtEmail
             // 
-            this.txtCpf.Enabled = false;
-            this.txtCpf.Location = new System.Drawing.Point(318, 105);
-            this.txtCpf.Name = "txtCpf";
-            this.txtCpf.Size = new System.Drawing.Size(249, 20);
-            this.txtCpf.TabIndex = 10;
+            this.txtEmail.Enabled = false;
+            this.txtEmail.Location = new System.Drawing.Point(318, 167);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(249, 20);
+            this.txtEmail.TabIndex = 11;
+            // 
+            // txtTelefone
+            // 
+            this.txtTelefone.Enabled = false;
+            this.txtTelefone.Location = new System.Drawing.Point(21, 167);
+            this.txtTelefone.Name = "txtTelefone";
+            this.txtTelefone.Size = new System.Drawing.Size(221, 20);
+            this.txtTelefone.TabIndex = 10;
             // 
             // txtNome
             // 
@@ -279,13 +279,13 @@
             this.txtNome.Size = new System.Drawing.Size(221, 20);
             this.txtNome.TabIndex = 9;
             // 
-            // txtTelefone
+            // txtCpf
             // 
-            this.txtTelefone.Enabled = false;
-            this.txtTelefone.Location = new System.Drawing.Point(21, 167);
-            this.txtTelefone.Name = "txtTelefone";
-            this.txtTelefone.Size = new System.Drawing.Size(221, 20);
-            this.txtTelefone.TabIndex = 9;
+            this.txtCpf.Enabled = false;
+            this.txtCpf.Location = new System.Drawing.Point(318, 105);
+            this.txtCpf.Name = "txtCpf";
+            this.txtCpf.Size = new System.Drawing.Size(249, 20);
+            this.txtCpf.TabIndex = 9;
             // 
             // txtCodigo
             // 
@@ -416,11 +416,11 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtCep;
         private System.Windows.Forms.TextBox txtNumero;
-        private System.Windows.Forms.TextBox txtEmail;
         private System.Windows.Forms.TextBox txtEndereco;
-        private System.Windows.Forms.TextBox txtCpf;
-        private System.Windows.Forms.TextBox txtNome;
+        private System.Windows.Forms.TextBox txtEmail;
         private System.Windows.Forms.TextBox txtTelefone;
+        private System.Windows.Forms.TextBox txtNome;
+        private System.Windows.Forms.TextBox txtCpf;
         private System.Windows.Forms.TextBox txtCodigo;
         private System.Windows.Forms.TextBox txtEstado;
         private System.Windows.Forms.TextBox txtCidade;

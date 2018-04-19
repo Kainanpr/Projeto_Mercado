@@ -25,10 +25,20 @@ namespace MercadoETEC.model.dao
         /* Método responsável pela iserção do cliente no bd. */
         public Cliente Create(Cliente cliente)
         {
+
             /* Guarda a pessoa no banco de dados 
              * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). 
-             * (Logo apos seta o Id do cliente com o id da pessoa vinda do banco de dados) */
-            cliente.Id = pessoaDAO.Create<Cliente>(cliente).Id;
+             * Caso ocorra algum problema o metodo returna null, caso contrario returna o cliente */
+            Cliente ultimoClienteInseridoBD = pessoaDAO.Create<Cliente>(cliente);
+
+            //Caso a ultima pessoa a ser inserida tenha problemas o metodo já retorna null
+            if (ultimoClienteInseridoBD == null)
+            {
+                return null;
+            }
+
+            /* (Logo apos seta o Id do cliente com o id da pessoa vinda do banco de dados) */
+            cliente.Id = ultimoClienteInseridoBD.Id;
 
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
@@ -62,6 +72,9 @@ namespace MercadoETEC.model.dao
             {
                 //Mostrar o erro na tela
                 MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
             }
             finally
             {
@@ -110,9 +123,8 @@ namespace MercadoETEC.model.dao
                 }
                 else
                 {
-                    /*Caso não tenha nenhum dado para ser lido irá lançar uma 
-                     *exceção para ser recuperada posteriormente no controler */
-                    throw new Exception("Cliente não encontrado");
+                    //Caso não encontre nenhum cliente retorna null
+                    return null;
                 }
 
             }
@@ -121,6 +133,9 @@ namespace MercadoETEC.model.dao
             {
                 //Mostrar o erro na tela
                 MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
             }
             finally
             {

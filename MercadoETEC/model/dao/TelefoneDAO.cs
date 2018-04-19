@@ -91,7 +91,7 @@ namespace MercadoETEC.model.dao
                 //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
                 MySqlDataReader dr = command.ExecuteReader();
 
-                //Verifica se tem dados para ser lido
+                //Verifica se tem dados para ser lido(le apenas o primeiro telefone encontrado)
                 if (dr.Read())
                 {
                     telefone.Id = dr.IsDBNull(0) == false ? dr.GetInt32(0) : 0;
@@ -99,9 +99,8 @@ namespace MercadoETEC.model.dao
                 }
                 else
                 {
-                    /*Caso não tenha nenhum dado para ser lido irá lançar uma 
-                     *exceção para ser recuperada posteriormente no controler */
-                    throw new Exception("Telefone não encontrado");
+                    //Caso não encontre nenhuma telefone retorna null
+                    return null;
                 }
 
             }
@@ -110,6 +109,9 @@ namespace MercadoETEC.model.dao
             {
                 //Mostrar o erro na tela
                 MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
             }
             finally
             {
