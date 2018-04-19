@@ -55,10 +55,33 @@ namespace MercadoETEC.model.service
             return cliente;
         }
 
-        public void update(Cliente cliente)
+        public void Update(Cliente cliente)
         {
+            //Atualiza o cliente
             clienteDAO.Update(cliente);
+
+            //Atualiza o endereço
+            enderecoDAO.Update(cliente.Endereco);
+
+            //Verifica se o cliente tem pelo menos 1 telefone ou mais
+            if(cliente.Telefones.Count > 0)
+                /* Atualiza o telefone(Nesse sistema é possivel cadastrar apenas um telefone) 
+                 * Mais foi implementado como uma lista se caso precisar de mais de um telefone */
+                telefoneDAO.Update(cliente.Telefones[0]);
         }
 
-    }
-}
+        public void Delete(Cliente cliente)
+        {
+            //Deleta o telefone do banco
+            if(cliente.Telefones.Count > 0)
+                telefoneDAO.Delete(cliente.Telefones[0].Id);
+
+            //Delete o cliente do banco
+            clienteDAO.Delete(cliente.Id);
+
+            //Deleta o endereco do banco
+            enderecoDAO.Delete(cliente.Endereco.Id);
+        }
+
+    }//Fim da classe
+}//Fim da namespace

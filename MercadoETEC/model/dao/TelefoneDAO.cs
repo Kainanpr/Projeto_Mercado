@@ -121,8 +121,88 @@ namespace MercadoETEC.model.dao
             return telefone;
         }
 
-        public void Update(Telefone telefone) { }
-        public void Delete(int id) { }
+        public void Update(Telefone telefone) 
+        {
+            //Recupera a instancia unica do banco de dados
+            dataBase = DataBase.GetInstance();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                //Query responsavel pela atualizar o telefone no banco de dados
+                string query = "UPDATE Telefone SET numero = @Numero WHERE id = @Id";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Adição de parametros e espeficicação dos tipos
+                command.Parameters.Add("@Id", MySqlDbType.Int32);
+                command.Parameters.Add("@Numero", MySqlDbType.String);
+
+                //Atribuição de valores
+                command.Parameters["@Id"].Value = telefone.Id;
+                command.Parameters["@Numero"].Value = telefone.Numero;
+
+                //Executar instrução sem retorno de dados
+                command.ExecuteNonQuery();
+
+                //MessageBox.Show("Conexão com banco de dados efetuada com sucesso");
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+            }
+            finally
+            {
+                //Independente se der erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+        }
+
+        public void Delete(int id) 
+        {
+            //Recupera a instancia unica do banco de dados
+            dataBase = DataBase.GetInstance();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                //Query responsavel pela deletar o telefone no banco de dados
+                string query = "DELETE FROM Telefone WHERE id = @Id";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Adição de parametros e espeficicação dos tipos
+                command.Parameters.Add("@Id", MySqlDbType.Int32);
+
+                //Atribuição de valores
+                command.Parameters["@Id"].Value = id;
+
+                //Executar instrução sem retorno de dados
+                command.ExecuteNonQuery();
+
+                //MessageBox.Show("Conexão com banco de dados efetuada com sucesso");
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+            }
+            finally
+            {
+                //Independente se der erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+        }
+
         public List<Telefone> ListAll() { return null; }
         public List<Telefone> FindByNumero(int numero) { return null; }
         public void DeleteByNumero(int numero) { }

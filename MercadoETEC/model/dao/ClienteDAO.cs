@@ -134,9 +134,7 @@ namespace MercadoETEC.model.dao
 
         public void Update(Cliente cliente) 
         {
-            /* Guarda a pessoa no banco de dados 
-             * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). 
-             * (Logo apos seta o Id do cliente com o id da pessoa vinda do banco de dados) */
+            /* Atualiza os dados da pessoa na tabela pessoa */
             pessoaDAO.Update<Cliente>(cliente);
 
             //Recupera a instancia unica do banco de dados
@@ -179,8 +177,51 @@ namespace MercadoETEC.model.dao
             }
         }
 
+        public void Delete(int id) 
+        {
+          
+            //Recupera a instancia unica do banco de dados
+            dataBase = DataBase.GetInstance();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                /* Query responsavel por deletar o cliente na tabela cliente do banco */
+                string query = "DELETE FROM Cliente WHERE id = @Id;";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Adição de parametros e espeficicação dos tipos
+                command.Parameters.Add("@Id", MySqlDbType.Int32);
+
+                //Atribuição de valores
+                command.Parameters["@Id"].Value = id;
+
+                //Executar instrução sem retorno de dados
+                command.ExecuteNonQuery();
+
+                //MessageBox.Show("Conexão com banco de dados efetuada com sucesso");
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+            }
+            finally
+            {
+                //Independente se der erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+
+            /* Apaga os dados da pessoa na tabela pessoa */
+            pessoaDAO.Delete(id);
+        }
+
         public Cliente FindByCpf(string cpf) { return null; }
-        public void Delete(int id) { }
         public List<Cliente> ListAll() { return null; }
         public List<Cliente> FindByName(string name) { return null; }
 

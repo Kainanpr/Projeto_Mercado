@@ -119,9 +119,7 @@ namespace MercadoETEC.views
              *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
             Cliente cliente = clienteService.Read(id);
 
-            cliente.Endereco.Id = 8;
-
-            clienteService.update(cliente);
+            clienteService.Delete(cliente);
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
