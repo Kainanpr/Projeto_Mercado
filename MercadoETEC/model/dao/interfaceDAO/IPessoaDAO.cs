@@ -17,7 +17,7 @@ namespace MercadoETEC.model.dao.interfaceDAO
         T FindByCpf<T>(string cpf) where T : Pessoa;
         void Update<T>(T pessoa) where T : Pessoa;
         void Delete(int id);
-        List<Pessoa> ListAll();
+        List<T> ListAll<T>() where T : Pessoa;
         List<Pessoa> FindByName(string name);
 
     }//Fim da interface

@@ -29,16 +29,13 @@ namespace MercadoETEC.model.dao
             /* Guarda a pessoa no banco de dados 
              * (O metodo retorna a ultima pessoa inserida no banco já com seu id setado). 
              * Caso ocorra algum problema o metodo returna null, caso contrario returna o cliente */
-            Cliente ultimoClienteInseridoBD = pessoaDAO.Create<Cliente>(cliente);
+            cliente = pessoaDAO.Create<Cliente>(cliente);
 
             //Caso a ultima pessoa a ser inserida tenha problemas o metodo já retorna null
-            if (ultimoClienteInseridoBD == null)
+            if (cliente == null)
             {
                 return null;
             }
-
-            /* (Logo apos seta o Id do cliente com o id da pessoa vinda do banco de dados) */
-            cliente.Id = ultimoClienteInseridoBD.Id;
 
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
@@ -119,7 +116,7 @@ namespace MercadoETEC.model.dao
                 //Verifica se tem dados para ser lido
                 if(dr.Read())
                 {
-                    cliente.Email = dr.IsDBNull(0) == false ? dr.GetString(0) : null;
+                    cliente = setCliente(dr, cliente);
                 }
                 else
                 {
@@ -236,9 +233,88 @@ namespace MercadoETEC.model.dao
             pessoaDAO.Delete(id);
         }
 
+        public List<Cliente> ListAll() 
+        {
+
+            //Recupera a instancia unica do banco de dados
+            dataBase = DataBase.GetInstance();
+
+            /* Variavel local responsável por armazenar o todos os clientes vindas do banco */
+            //Chama o metodo generico da classe pessoaDAO
+            List<Cliente> clientes = pessoaDAO.ListAll<Cliente>();          
+
+            /* Variavel local responsável por armazenar o cliente pesquisado no banco de dados */
+            Cliente cliente = new Cliente();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                /* Query responsavel por buscar uma pessoa pelo seu id */
+                string query = "SELECT email FROM Cliente ORDER BY id";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
+                MySqlDataReader dr = command.ExecuteReader();
+
+                //Percorrer esse objeto até obter todos os dados
+                if(dr.HasRows)
+                {
+                    //Contador para percorrer a lista
+                    int count = 0;
+
+                    while (dr.Read())
+                    {
+                        //Chama o metodo auxiliar para setar a Pessoa vindo do banco 
+                        cliente = setCliente(dr, cliente);
+
+                        //Percorre a lista e altera o email de cada cliente
+                        clientes[count++].Email = cliente.Email;
+                    }
+                }
+                else
+                {
+                    //Caso ocorra algum problema retorna null
+                    return null;
+                }              
+           
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
+            }
+            finally
+            {
+                //Independente se ocorrer erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+
+            /* Retorna todos os clientes pesquisados */
+            return clientes;
+        }
+        
+
         public Cliente FindByCpf(string cpf) { return null; }
-        public List<Cliente> ListAll() { return null; }
         public List<Cliente> FindByName(string name) { return null; }
+
+        /* Metodo auxiliar responsavel por setar os dados da pessoa vindo do dados do banco
+         * (Método generico) */
+        private Cliente setCliente(MySqlDataReader dr, Cliente cliente)
+        {
+
+            cliente.Email = dr.IsDBNull(0) == false ? dr.GetString(0) : null;
+                
+            return cliente;
+        }
+
 
     }//Fim da classe
 }//Fim da interface

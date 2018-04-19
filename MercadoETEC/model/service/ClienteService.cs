@@ -24,7 +24,7 @@ namespace MercadoETEC.model.service
         //Atributo responsavel por realizar as operações de CRUD no telefone no banco de dados
         private TelefoneDAO telefoneDAO = new TelefoneDAO();
 
-        public Cliente Create(Cliente cliente)
+        public void Create(Cliente cliente)
         {
             /* Verifica se o cliente possui um endereco. 
                Para registrar uma pessoa no banco é necessario ter um endereço cadastrado primeiro  
@@ -71,9 +71,6 @@ namespace MercadoETEC.model.service
             }
 
 
-            /* Retorna o ultimo Cliente cadastrado no banco ja com seu id setado. 
-             * Talves esse id possa ser necessario posteriormente para alguma associação */
-            return cliente;
         }
 
         public Cliente Read(int id)
@@ -129,6 +126,37 @@ namespace MercadoETEC.model.service
             //Verifica se o cliente tem endereço e deleta o endereco do banco
             if(cliente.Endereco != null)
                 enderecoDAO.Delete(cliente.Endereco.Id);
+        }
+
+        public List<Cliente> ListAll()
+        {
+            //Lista todos os clientes
+            List<Cliente> clientes = clienteDAO.ListAll();
+
+            //Caso não encontre nenhum cliente será lançado a exceção que nos criamos
+            if(clientes == null)
+            {
+                throw new ObjetoNotFoundException("Clientes não encontrados");
+            }
+
+            foreach (Cliente cli in clientes)
+            {
+                /* Delega a pesquisa do endereco para o DAO correspondente 
+                 * caso nao encontrar será retornado null */
+                cli.Endereco = enderecoDAO.Read(cli.Endereco.Id);
+
+                /* Delega a pesquisa do telefone para o DAO correspondente 
+                 * caso nao encontrar será retornado null*/
+                Telefone tel = telefoneDAO.Read(cli.Id);
+
+                /* Caso não encontre nenhum telefone não será necessario lançar uma exceção, 
+                 * apenas não adicionamos na sua lista de telefones */
+                if (tel != null)
+                    cli.Telefones.Add(tel);
+            }
+
+
+            return clientes;
         }
 
     }//Fim da classe

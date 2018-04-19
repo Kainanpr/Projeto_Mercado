@@ -114,17 +114,38 @@ namespace MercadoETEC.views
 
         private void btnAlterar_Click(object sender, EventArgs e)
         {
+            //TESTES SENDO FEITO AKI KKKKKK
+
             //Captura o id digitado pelo usuario para pesquisar
-            int id = int.Parse(txtCodigo.Text);
+            //int id = int.Parse(txtCodigo.Text);
 
             /*Encontra o cliente de acordo com seu ID 
              *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
-            Cliente cliente = clienteService.Read(id);
+            //Cliente cliente = clienteService.Read(id);
     
 
-            clienteService.Delete(cliente);
-
             //clienteService.Delete(cliente);
+
+
+            List<Cliente> clientes = clienteService.ListAll();
+
+            foreach(Cliente cli in clientes)
+            {
+                MessageBox.Show(   "ID: " + cli.Id
+                                 + "\nCpf: " + cli.Cpf
+                                 + "\nNome: " + cli.Nome
+                                 + "\nEmail: " + cli.Email
+                                 + "\n\nIDENDERECO: " + cli.Endereco.Id
+                                 + "\nRua: " + cli.Endereco.Rua
+                                 + "\nNumero: " + cli.Endereco.Numero
+                                 + "\nCep: " + cli.Endereco.Cep
+                                 + "\nCidade: " + cli.Endereco.Cidade
+                                 + "\nEstado: " + cli.Endereco.Estado
+                                 + "\n\nNumeroTel: " + cli.Telefones[0].Numero
+                                 + "\n\nCOUNT: " + clientes.Count
+                                );
+            }
+
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -187,14 +208,14 @@ namespace MercadoETEC.views
         {
             Cliente cliente = new Cliente();
             cliente.Nome = txtNome.Text == "" ? null : txtNome.Text;
-            cliente.Cpf = txtTelefone.Text == "" ? null : txtTelefone.Text;
-            cliente.Email = txtEndereco.Text == "" ? null : txtEndereco.Text;
+            cliente.Cpf = txtCpf.Text == "" ? null : txtCpf.Text;
+            cliente.Email = txtEmail.Text == "" ? null : txtEmail.Text;
 
             Telefone tel = new Telefone();
-            tel.Numero = txtCpf.Text == "" ? null : txtCpf.Text;
+            tel.Numero = txtTelefone.Text == "" ? null : txtTelefone.Text;
 
             Endereco end = new Endereco();
-            end.Rua = txtEmail.Text == "" ? null : txtEmail.Text;
+            end.Rua = txtEndereco.Text == "" ? null : txtEndereco.Text;
             end.Numero = int.Parse(txtNumero.Text);
             end.Cep = int.Parse(txtCep.Text);
             end.Cidade = txtCidade.Text == "" ? null : txtCidade.Text;
@@ -215,12 +236,12 @@ namespace MercadoETEC.views
         {
 
             txtNome.Text = cliente.Nome;
-            txtTelefone.Text = cliente.Cpf;
-            txtEndereco.Text = cliente.Email;
+            txtCpf.Text = cliente.Cpf;
+            txtEmail.Text = cliente.Email;
 
             //Verifica se o usuario possui telefones na lista (nessa caso queremos mostrar apenas o 1º telefone)
             if (cliente.Telefones.Count > 0)
-                txtCpf.Text = cliente.Telefones[0].Numero;
+                txtTelefone.Text = cliente.Telefones[0].Numero;
             //Caso ele nao tenha telefone cadastrado o campo deve estar em braco
             else
                 txtCpf.Text = "";
@@ -229,7 +250,7 @@ namespace MercadoETEC.views
             //Verifica se o cliente possui endereço cadastrado
             if(cliente.Endereco != null)
             {
-                txtEmail.Text = cliente.Endereco.Rua;
+                txtEndereco.Text = cliente.Endereco.Rua;
                 txtNumero.Text = cliente.Endereco.Numero == 0 ? "" : cliente.Endereco.Numero.ToString();
                 txtCep.Text = cliente.Endereco.Cep == 0 ? "" : cliente.Endereco.Cep.ToString();
                 txtCidade.Text = cliente.Endereco.Cidade;

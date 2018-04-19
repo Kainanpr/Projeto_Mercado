@@ -60,8 +60,17 @@ namespace MercadoETEC.model.dao
                 //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
                 MySqlDataReader dr = command.ExecuteReader();
 
-                //Chama o metodo auxiliar para setar a Pessoa vindo do banco 
-                ultimaPessoa = setPessoa(dr, ultimaPessoa);
+                //Verifica se tem dados para ser lidos
+                if (dr.Read())
+                {
+                    //Chama o metodo auxiliar para setar a Pessoa vindo do banco
+                    ultimaPessoa = setPessoa(dr, ultimaPessoa);
+                }
+                else
+                {
+                    //Caso não encontre nenhuma pessoa retorna null
+                    return null;
+                }
 
                 //MessageBox.Show("Conexão com banco de dados efetuada com sucesso");
             }
@@ -83,7 +92,8 @@ namespace MercadoETEC.model.dao
             /* Retorna a ultima pessoa inserido na tabela Pessoa 
              * para que possa ser associado a um funcionado ou a um cliente
              * (Esse retorno se torna necessario para controlar os ids da tabela, pois é um campo auto_increment) */
-            return ultimaPessoa;
+            pessoa.Id = ultimaPessoa.Id;
+            return pessoa;
         }
 
         /* Pesquisa uma pessoa pelo seu ID (Metodo generico)*/
@@ -92,7 +102,7 @@ namespace MercadoETEC.model.dao
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
 
-            /* Variavel local responsável por armazenar o endereco pesquisado de acordo com seu ID
+            /* Variavel local responsável por armazenar a  pessoa pesquisada no banco de dados. 
              * (A palavra new so é usada em tipos concretos) 
              * (Activador é uma classe que deixa criar uma instancia de tipo generico) */
             T pessoa = Activator.CreateInstance<T>();
@@ -117,8 +127,18 @@ namespace MercadoETEC.model.dao
                 //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
                 MySqlDataReader dr = command.ExecuteReader();
 
-                //Chama o metodo auxiliar para setar a Pessoa vindo do banco 
-                pessoa = setPessoa(dr, pessoa);
+                //Verifica se tem dados para ser lidos
+                if (dr.Read())
+                {
+                    //Chama o metodo auxiliar para setar a Pessoa vindo do banco
+                    pessoa = setPessoa(dr, pessoa);
+                }
+                else 
+                {
+                    //Caso não encontre nenhuma pessoa retorna null
+                    return null;
+                }
+                    
             }
             //Caso ocorra algum tipo de exceção será tratado aqui.
             catch (MySqlException ex)
@@ -223,7 +243,74 @@ namespace MercadoETEC.model.dao
             }
         }
 
-        public List<Pessoa> ListAll() { return null; }
+        public List<T> ListAll<T>() where T : Pessoa
+        {
+            //Recupera a instancia unica do banco de dados
+            dataBase = DataBase.GetInstance();
+
+            
+
+            /* Variavel local responsável por armazenar o todas as pessoas vindas do banco */
+            List<T> pessoas = new List<T>();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                /* Query responsavel por buscar uma pessoa pelo seu id */
+                string query = "SELECT * FROM Pessoa ORDER BY id;";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
+                MySqlDataReader dr = command.ExecuteReader();
+
+                //Percorrer esse objeto até obter todos os dados
+                if(dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        /* Variavel local responsável por armazenar a pessoa pesquisada no banco de dados. 
+                         * (A palavra new so é usada em tipos concretos) 
+                         * (Activador é uma classe que deixa criar uma instancia de tipo generico) */
+                        T pessoa = Activator.CreateInstance<T>();
+
+                        //Chama o metodo auxiliar para setar a Pessoa vindo do banco 
+                        pessoa = setPessoa(dr, pessoa);
+
+                        //Adiciona a pessoa na lista
+                        pessoas.Add(pessoa);
+                    }
+                 
+                }
+                else
+                {
+                    //Caso ocorra algum problema retorna null
+                    return null;
+                }              
+           
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
+            }
+            finally
+            {
+                //Independente se ocorrer erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+
+            /* Retorna todas as pessoas pesquisadas */
+            return pessoas;
+        }
+
         public T FindByCpf<T>(string cpf) where T : Pessoa { return null; }
         public List<Pessoa> FindByName(string name) { return null; }
 
@@ -232,29 +319,15 @@ namespace MercadoETEC.model.dao
         private T setPessoa<T>(MySqlDataReader dr, T pessoa) where T : Pessoa
         {
 
-            //Verifica se tem dados para ser lido
-            if (dr.HasRows)
-            {
-                //Percorrer esse objeto até obter todos os dados
-                while(dr.Read()) 
-                {
-                    pessoa.Id = dr.IsDBNull(0) == false ? dr.GetInt32(0) : 0;
-                    pessoa.Cpf = dr.IsDBNull(1) == false ? dr.GetString(1) : null;
-                    pessoa.Nome = dr.IsDBNull(2) == false ? dr.GetString(2) : null;
+            pessoa.Id = dr.IsDBNull(0) == false ? dr.GetInt32(0) : 0;
+            pessoa.Cpf = dr.IsDBNull(1) == false ? dr.GetString(1) : null;
+            pessoa.Nome = dr.IsDBNull(2) == false ? dr.GetString(2) : null;
 
-                    //Instancia um endereço para pessoa
-                    pessoa.Endereco = new Endereco();
+            //Instancia um endereço para pessoa
+            pessoa.Endereco = new Endereco();
                     
-                    //Seta os dados do endereço da pessoa de acordo com o dados vindo do banco
-                    pessoa.Endereco.Id = dr.IsDBNull(3) == false ? dr.GetInt32(3) : 0;
-                }
-                
-            }
-            else
-            {
-                //Caso não encontre nenhuma pessoa retorna null
-                return null;
-            }
+            //Seta os dados do endereço da pessoa de acordo com o dados vindo do banco
+            pessoa.Endereco.Id = dr.IsDBNull(3) == false ? dr.GetInt32(3) : 0;
                 
             return pessoa;
         }
