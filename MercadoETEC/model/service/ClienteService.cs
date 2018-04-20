@@ -47,7 +47,7 @@ namespace MercadoETEC.model.service
                 {
                     /* Se ocorrer problema na gravação do cliente devemos excluir
                      * o endereço que foi gravado anteriormente, pois o endereço 
-                     * não foi asocciado ao cliente correto */
+                     * não foi asociado ao cliente correto */
                     enderecoDAO.Delete(cliente.Endereco.Id);
                 }
                 else
@@ -81,10 +81,6 @@ namespace MercadoETEC.model.service
             //Caso não encontre nenhum cliente será lançado a exceção que nos criamos
             if (cliente == null)
                 throw new ObjetoNotFoundException("Cliente não encontrado");
-
-            /* Delega a pesquisa do endereco para o DAO correspondente 
-             * caso nao encontrar será retornado null*/
-            cliente.Endereco = enderecoDAO.Read(cliente.Endereco.Id);
 
             /* Delega a pesquisa do telefone para o DAO correspondente 
              * caso nao encontrar será retornado null*/
@@ -141,9 +137,6 @@ namespace MercadoETEC.model.service
 
             foreach (Cliente cli in clientes)
             {
-                /* Delega a pesquisa do endereco para o DAO correspondente 
-                 * caso nao encontrar será retornado null */
-                cli.Endereco = enderecoDAO.Read(cli.Endereco.Id);
 
                 /* Delega a pesquisa do telefone para o DAO correspondente 
                  * caso nao encontrar será retornado null*/

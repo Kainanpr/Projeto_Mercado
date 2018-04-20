@@ -73,11 +73,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="views\FormCliente.cs">
+    <Compile Include="views\FormAltExcCliente.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="views\FormCliente.Designer.cs">
-      <DependentUpon>FormCliente.cs</DependentUpon>
+    <Compile Include="views\FormAltExcCliente.Designer.cs">
+      <DependentUpon>FormAltExcCliente.cs</DependentUpon>
+    </Compile>
+    <Compile Include="views\FormInserirCliente.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="views\FormInserirCliente.Designer.cs">
+      <DependentUpon>FormInserirCliente.cs</DependentUpon>
     </Compile>
     <Compile Include="views\telaPrincipal.cs">
       <SubType>Form</SubType>
@@ -87,8 +93,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="views\FormCliente.resx">
-      <DependentUpon>FormCliente.cs</DependentUpon>
+    <EmbeddedResource Include="views\FormAltExcCliente.resx">
+      <DependentUpon>FormAltExcCliente.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="views\FormInserirCliente.resx">
+      <DependentUpon>FormInserirCliente.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="views\telaPrincipal.resx">
       <DependentUpon>telaPrincipal.cs</DependentUpon>
@@ -129,7 +138,21 @@
   <ItemGroup>
     <None Include="Resources\icon_vendaMini.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\icon_clienteRefreshMini.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_FuncionarioRefreshMini.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_fornecedorRefreshMini.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_produtoRefreshMini.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_vandaRefreshMini.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

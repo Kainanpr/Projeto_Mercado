@@ -21,7 +21,13 @@ namespace MercadoETEC.views
         private void btnCadCliente_Click(object sender, EventArgs e)
         {
             //instancia uma view de formulario de cliente
-            new FormCliente().ShowDialog();
+            new FormInserirCliente().ShowDialog();
+        }
+
+        private void btClienteAltExc_Click(object sender, EventArgs e)
+        {
+            //instancia uma view de formulario de cliente
+            new FormAltExcCliente().ShowDialog();
         }
     }
 }

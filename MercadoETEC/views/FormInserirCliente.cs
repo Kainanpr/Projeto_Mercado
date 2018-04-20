@@ -18,15 +18,15 @@ using MercadoETEC.model.service.exception;
 namespace MercadoETEC.views
 {
 
-    /* View responsavel pelo formulario de clientes, associando cliente a endereço
+    /* View responsavel pelo formulario de clientes, associando cliente a endereço e telefone
      * Os eventos de botões representam a camada de controller(C) do MVC */
-    public partial class FormCliente : Form
+    public partial class FormInserirCliente : Form
     {
 
         //Atributo responsavel por ter as regras de negocio relacionadas ao DAO
         private ClienteService clienteService = new ClienteService();
 
-        public FormCliente()
+        public FormInserirCliente()
         {
             InitializeComponent();
         }
@@ -42,7 +42,6 @@ namespace MercadoETEC.views
             btnCancelar.Enabled = true;
             btnSalvar.Enabled = true;
             btnPesquisar.Enabled = false;
-            btnAlterar.Enabled = false;
 
             AbilitarCamposGeral();
             LimparCamposGeral();
@@ -75,7 +74,6 @@ namespace MercadoETEC.views
             btnSalvar.Enabled = false;
             btnCancelar.Enabled = false;
             btnPesquisar.Enabled = true;
-            btnAlterar.Enabled = true;
             txtCodigo.Enabled = true;
         }
 
@@ -112,42 +110,6 @@ namespace MercadoETEC.views
  
         }
 
-        private void btnAlterar_Click(object sender, EventArgs e)
-        {
-            //TESTES SENDO FEITO AKI KKKKKK
-
-            //Captura o id digitado pelo usuario para pesquisar
-            //int id = int.Parse(txtCodigo.Text);
-
-            /*Encontra o cliente de acordo com seu ID 
-             *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
-            //Cliente cliente = clienteService.Read(id);
-    
-
-            //clienteService.Delete(cliente);
-
-
-            List<Cliente> clientes = clienteService.ListAll();
-
-            foreach(Cliente cli in clientes)
-            {
-                MessageBox.Show(   "ID: " + cli.Id
-                                 + "\nCpf: " + cli.Cpf
-                                 + "\nNome: " + cli.Nome
-                                 + "\nEmail: " + cli.Email
-                                 + "\n\nIDENDERECO: " + cli.Endereco.Id
-                                 + "\nRua: " + cli.Endereco.Rua
-                                 + "\nNumero: " + cli.Endereco.Numero
-                                 + "\nCep: " + cli.Endereco.Cep
-                                 + "\nCidade: " + cli.Endereco.Cidade
-                                 + "\nEstado: " + cli.Endereco.Estado
-                                 + "\n\nNumeroTel: " + cli.Telefones[0].Numero
-                                 + "\n\nCOUNT: " + clientes.Count
-                                );
-            }
-
-        }
-
         private void btnCancelar_Click(object sender, EventArgs e)
         {
             LimparCamposGeral();
@@ -156,7 +118,6 @@ namespace MercadoETEC.views
             btnCancelar.Enabled = false;
             btnSalvar.Enabled = false;
             btnPesquisar.Enabled = true;
-            btnAlterar.Enabled = true;
             txtCodigo.Enabled = true;
         }
 
@@ -244,7 +205,7 @@ namespace MercadoETEC.views
                 txtTelefone.Text = cliente.Telefones[0].Numero;
             //Caso ele nao tenha telefone cadastrado o campo deve estar em braco
             else
-                txtCpf.Text = "";
+                txtTelefone.Text = "";
 
 
             //Verifica se o cliente possui endereço cadastrado

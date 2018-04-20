@@ -62,7 +62,7 @@ namespace MercadoETEC.model.dao
             }
         }
 
-        /* Pesquisa um telefone pelo seu ID */
+        /* Pesquisa um telefone pelo seu ID do cliente */
         public Telefone Read(int id)
         {
             //Recupera a instancia unica do banco de dados

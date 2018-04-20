@@ -113,7 +113,9 @@ namespace MercadoETEC.model.dao
                 dataBase.AbrirConexao();
 
                 /* Query responsavel por buscar uma pessoa pelo seu id */
-                string query = "SELECT * FROM Pessoa WHERE id = @Id;";
+                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa  p "
+                               + "LEFT JOIN Endereco e ON p.idEndereco = e.id "
+                               + "WHERE p.id = @Id;";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -259,7 +261,9 @@ namespace MercadoETEC.model.dao
                 dataBase.AbrirConexao();
 
                 /* Query responsavel por buscar uma pessoa pelo seu id */
-                string query = "SELECT * FROM Pessoa ORDER BY id;";
+                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa  p "
+                                + "LEFT JOIN Endereco e ON p.idEndereco = e.id "
+                                + "ORDER BY p.id;";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -328,7 +332,12 @@ namespace MercadoETEC.model.dao
                     
             //Seta os dados do endereço da pessoa de acordo com o dados vindo do banco
             pessoa.Endereco.Id = dr.IsDBNull(3) == false ? dr.GetInt32(3) : 0;
-                
+            pessoa.Endereco.Rua = dr.IsDBNull(4) == false ? dr.GetString(4) : null;
+            pessoa.Endereco.Numero = dr.IsDBNull(5) == false ? dr.GetInt32(5) : 0;
+            pessoa.Endereco.Cep = dr.IsDBNull(6) == false ? dr.GetInt32(6) : 0;
+            pessoa.Endereco.Cidade = dr.IsDBNull(7) == false ? dr.GetString(7) : null;
+            pessoa.Endereco.Estado = dr.IsDBNull(8) == false ? dr.GetString(8) : null;
+
             return pessoa;
         }
 
