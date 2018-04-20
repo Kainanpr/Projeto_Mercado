@@ -101,9 +101,26 @@ namespace MercadoETEC.model.service
 
             //Verifica se o cliente tem pelo menos 1 telefone ou mais
             if(cliente.Telefones.Count > 0)
-                /* Atualiza o telefone(Nesse sistema é possivel cadastrar apenas um telefone) 
-                 * Mais foi implementado como uma lista se caso precisar de mais de um telefone */
-                telefoneDAO.Update(cliente.Telefones[0]);
+            {
+                //Pesquisa para verificar se o telefone ja foi inserido no banco
+                /* Se retornar NULL quer dizer que não existe ainda */
+                Telefone tel = telefoneDAO.Read(cliente.Id);
+
+                if(tel != null)
+                {
+                    /* Atualiza o telefone(Nesse sistema é possivel cadastrar apenas um telefone) 
+                    * Mais foi implementado como uma lista se caso precisar de mais de um telefone */
+                    telefoneDAO.Update(cliente.Telefones[0]);
+                }
+                else
+                {
+                    //Cria o telefone na lista
+                    telefoneDAO.Create(cliente.Telefones[0]);
+                }
+
+                
+            }
+               
         }
 
         public void Delete(Cliente cliente)
