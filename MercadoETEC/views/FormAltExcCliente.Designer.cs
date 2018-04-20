@@ -57,8 +57,8 @@
             this.txtEndereco = new System.Windows.Forms.TextBox();
             this.txtEmail = new System.Windows.Forms.TextBox();
             this.txtTelefone = new System.Windows.Forms.TextBox();
-            this.txtNome = new System.Windows.Forms.TextBox();
             this.txtCpf = new System.Windows.Forms.TextBox();
+            this.txtNome = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -149,16 +149,22 @@
             // 
             // dataGridViewClientes
             // 
+            this.dataGridViewClientes.AllowUserToAddRows = false;
+            this.dataGridViewClientes.AllowUserToDeleteRows = false;
             this.dataGridViewClientes.BackgroundColor = System.Drawing.SystemColors.Window;
             this.dataGridViewClientes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewClientes.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.codigo,
             this.nome,
             this.cpf});
+            this.dataGridViewClientes.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dataGridViewClientes.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.dataGridViewClientes.Location = new System.Drawing.Point(61, 173);
+            this.dataGridViewClientes.MultiSelect = false;
             this.dataGridViewClientes.Name = "dataGridViewClientes";
             this.dataGridViewClientes.Size = new System.Drawing.Size(679, 195);
             this.dataGridViewClientes.TabIndex = 4;
+            this.dataGridViewClientes.SelectionChanged += new System.EventHandler(this.dataGridViewClientes_SelectionChanged);
             // 
             // codigo
             // 
@@ -213,6 +219,7 @@
             this.btnExcluir.TabIndex = 8;
             this.btnExcluir.Text = "Excluir";
             this.btnExcluir.UseVisualStyleBackColor = true;
+            this.btnExcluir.Click += new System.EventHandler(this.btnExcluir_Click);
             // 
             // btnPesquisar
             // 
@@ -284,8 +291,8 @@
             this.panel3.Controls.Add(this.txtEndereco);
             this.panel3.Controls.Add(this.txtEmail);
             this.panel3.Controls.Add(this.txtTelefone);
-            this.panel3.Controls.Add(this.txtNome);
             this.panel3.Controls.Add(this.txtCpf);
+            this.panel3.Controls.Add(this.txtNome);
             this.panel3.Controls.Add(this.label9);
             this.panel3.Controls.Add(this.label8);
             this.panel3.Controls.Add(this.label7);
@@ -382,15 +389,6 @@
             this.txtTelefone.Size = new System.Drawing.Size(366, 22);
             this.txtTelefone.TabIndex = 30;
             // 
-            // txtNome
-            // 
-            this.txtNome.Enabled = false;
-            this.txtNome.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtNome.Location = new System.Drawing.Point(27, 58);
-            this.txtNome.Name = "txtNome";
-            this.txtNome.Size = new System.Drawing.Size(365, 22);
-            this.txtNome.TabIndex = 29;
-            // 
             // txtCpf
             // 
             this.txtCpf.Enabled = false;
@@ -398,7 +396,16 @@
             this.txtCpf.Location = new System.Drawing.Point(455, 58);
             this.txtCpf.Name = "txtCpf";
             this.txtCpf.Size = new System.Drawing.Size(282, 22);
-            this.txtCpf.TabIndex = 28;
+            this.txtCpf.TabIndex = 29;
+            // 
+            // txtNome
+            // 
+            this.txtNome.Enabled = false;
+            this.txtNome.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtNome.Location = new System.Drawing.Point(27, 58);
+            this.txtNome.Name = "txtNome";
+            this.txtNome.Size = new System.Drawing.Size(365, 22);
+            this.txtNome.TabIndex = 28;
             // 
             // label9
             // 
@@ -538,8 +545,8 @@
         private System.Windows.Forms.TextBox txtEndereco;
         private System.Windows.Forms.TextBox txtEmail;
         private System.Windows.Forms.TextBox txtTelefone;
-        private System.Windows.Forms.TextBox txtNome;
         private System.Windows.Forms.TextBox txtCpf;
+        private System.Windows.Forms.TextBox txtNome;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;

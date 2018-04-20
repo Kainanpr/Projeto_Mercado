@@ -114,7 +114,7 @@ namespace MercadoETEC.model.dao
                 MySqlDataReader dr = command.ExecuteReader();
 
                 //Verifica se tem dados para ser lido
-                if(dr.Read())
+                if (dr.Read())
                 {
                     cliente = setCliente(dr, cliente);
                 }
@@ -144,7 +144,7 @@ namespace MercadoETEC.model.dao
             return cliente;
         }
 
-        public void Update(Cliente cliente) 
+        public void Update(Cliente cliente)
         {
             /* Atualiza os dados da pessoa na tabela pessoa */
             pessoaDAO.Update<Cliente>(cliente);
@@ -189,9 +189,9 @@ namespace MercadoETEC.model.dao
             }
         }
 
-        public void Delete(int id) 
+        public void Delete(int id)
         {
-          
+
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
 
@@ -233,7 +233,7 @@ namespace MercadoETEC.model.dao
             pessoaDAO.Delete(id);
         }
 
-        public List<Cliente> ListAll() 
+        public List<Cliente> ListAll()
         {
 
             //Recupera a instancia unica do banco de dados
@@ -241,7 +241,7 @@ namespace MercadoETEC.model.dao
 
             /* Variavel local responsável por armazenar o todos os clientes vindas do banco */
             //Chama o metodo generico da classe pessoaDAO
-            List<Cliente> clientes = pessoaDAO.ListAll<Cliente>();          
+            List<Cliente> clientes = pessoaDAO.ListAll<Cliente>();
 
             /* Variavel local responsável por armazenar o cliente pesquisado no banco de dados */
             Cliente cliente = new Cliente();
@@ -261,7 +261,7 @@ namespace MercadoETEC.model.dao
                 MySqlDataReader dr = command.ExecuteReader();
 
                 //Percorrer esse objeto até obter todos os dados
-                if(dr.HasRows)
+                if (dr.HasRows)
                 {
                     //Contador para percorrer a lista
                     int count = 0;
@@ -279,8 +279,8 @@ namespace MercadoETEC.model.dao
                 {
                     //Caso ocorra algum problema retorna null
                     return null;
-                }              
-           
+                }
+
             }
             //Caso ocorra algum tipo de exceção será tratado aqui.
             catch (MySqlException ex)
@@ -300,7 +300,7 @@ namespace MercadoETEC.model.dao
             /* Retorna todos os clientes pesquisados */
             return clientes;
         }
-        
+
 
         public Cliente FindByCpf(string cpf) { return null; }
         public List<Cliente> FindByName(string name) { return null; }
@@ -311,7 +311,7 @@ namespace MercadoETEC.model.dao
         {
 
             cliente.Email = dr.IsDBNull(0) == false ? dr.GetString(0) : null;
-                
+
             return cliente;
         }
 

@@ -57,7 +57,8 @@ namespace MercadoETEC.model.conexao
         //Método responsável por fechar a conexão
         public void FecharConexao()
         {
-            objConexao.Close();
+            if (objConexao.State == ConnectionState.Open)
+                objConexao.Close();
         }
 
     }//Fim da classe

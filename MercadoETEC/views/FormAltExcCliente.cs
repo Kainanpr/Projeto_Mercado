@@ -46,32 +46,8 @@ namespace MercadoETEC.views
 
         private void btnListar_Click(object sender, EventArgs e)
         {
-            //Irá tentar encontrar um cliente
-            try
-            {
-
-                dataGridViewClientes.Rows.Clear();
-                
-                /*Encontra o cliente de acordo com seu ID 
-                 *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
-                List<Cliente> clientes = clienteService.ListAll();
-
-                foreach (Cliente cli in clientes)
-                {
-
-                    dataGridViewClientes.Rows.Add(cli.Id, cli.Nome, cli.Cpf);
-
-                }
-
-            }
             
-            //Caso não encontre nenhum cliente irá recuperar a exceção que nos lançamos
-            catch (ObjetoNotFoundException ex)
-            {
-                //Recupera a exceção com o erro que nos instanciamos
-                MessageBox.Show("Erro: " + ex.Message);
-
-            }
+            AtualizarGrid();
         }
 
         private void btnAlterar_Click(object sender, EventArgs e)
@@ -140,13 +116,62 @@ namespace MercadoETEC.views
             btnListar.Enabled = true;
             btnAlterar.Enabled = true;
             btnPesquisar.Enabled = true;
+
         }
 
+        //Evento é disparado sempre que eu escolher uma linha da gride
+        private void dataGridViewClientes_SelectionChanged(object sender, EventArgs e)
+        {
+
+            try
+            {
+                //Pega o id do cliente da linha do datagrid que estiver selecionado
+                int id = int.Parse(dataGridViewClientes.CurrentRow.Cells[0].Value.ToString());
+
+                //Pesquisa o cliente selecionado
+                cliente = clienteService.Read(id);
+
+                //Envia o cliente para setar a view
+                SetDTO(cliente);
+            }
+            catch (ObjetoNotFoundException)
+            {
+                //Caso não encontre nenhum cliente limpe os campos
+                LimparCamposGeral();
+            }
+            
+        }
+
+        private void btnExcluir_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(this, "Você tem certeza que deseja excluir este cliente?", "Sim", MessageBoxButtons.YesNo);
+            
+            if (result == DialogResult.Yes)
+            {
+                clienteService.Delete(cliente);
+
+                //Comandos abaixos apenas para resetar o layout
+                DesabilitarCamposGeral();
+
+                btnSalvar.Enabled = false;
+                btnCancelar.Enabled = false;
+                btnExcluir.Enabled = false;
+
+                btnListar.Enabled = true;
+                btnAlterar.Enabled = true;
+                btnPesquisar.Enabled = true;
+
+                LimparCamposGeral();
+
+                AtualizarGrid();
+            }
+
+        }
 
         //Metodos auxiliares
         private void AbilitarCamposGeral()
         {
-            txtNome.Enabled = true;
+            txtCpf.Enabled = true;
             txtTelefone.Enabled = true;
             txtCidade.Enabled = true;
             txtCep.Enabled = true;
@@ -154,12 +179,12 @@ namespace MercadoETEC.views
             txtEmail.Enabled = true;
             txtNumero.Enabled = true;
             txtEstado.Enabled = true;
-            txtCpf.Enabled = true;
+            txtNome.Enabled = true;
         }
 
         private void DesabilitarCamposGeral()
         {
-            txtNome.Enabled = false;
+            txtCpf.Enabled = false;
             txtTelefone.Enabled = false;
             txtCidade.Enabled = false;
             txtCep.Enabled = false;
@@ -167,12 +192,12 @@ namespace MercadoETEC.views
             txtEmail.Enabled = false;
             txtNumero.Enabled = false;
             txtEstado.Enabled = false;
-            txtCpf.Enabled = false;
+            txtNome.Enabled = false;
         }
 
         private void LimparCamposGeral()
         {
-            txtNome.Clear();
+            txtCpf.Clear();
             txtTelefone.Clear();
             txtCidade.Clear();
             txtCep.Clear();
@@ -180,7 +205,38 @@ namespace MercadoETEC.views
             txtEmail.Clear();
             txtNumero.Clear();
             txtEstado.Clear();
-            txtCpf.Clear();
+            txtNome.Clear();
+        }
+
+        private void AtualizarGrid()
+        {
+            //Irá tentar encontrar um cliente
+            try
+            {
+                //Limpa todas as rows
+                dataGridViewClientes.Rows.Clear();
+
+                /*Encontra o cliente de acordo com seu ID 
+                 *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
+                List<Cliente> clientes = clienteService.ListAll();
+
+                //Percorre a lista de clientes
+                foreach (Cliente cli in clientes)
+                {
+                    //Adiciona os dados do cliente na row
+                    dataGridViewClientes.Rows.Add(cli.Id, cli.Nome, cli.Cpf);
+
+                }
+
+            }
+
+            //Caso não encontre nenhum cliente irá recuperar a exceção que nos lançamos
+            catch (ObjetoNotFoundException ex)
+            {
+                //Recupera a exceção com o erro que nos instanciamos
+                MessageBox.Show("Erro: " + ex.Message);
+
+            }
         }
 
         /* Metodos auxiliares (DTO). 
@@ -199,7 +255,13 @@ namespace MercadoETEC.views
 
             //Verifica se o cliente tem telefones na sua lista
             if(cliente.Telefones.Count > 0)
-                cliente.Telefones[0].Numero = txtNumero.Text == "" ? null : txtNumero.Text;
+                cliente.Telefones[0].Numero = txtTelefone.Text == "" ? null : txtTelefone.Text;
+            else
+            {
+                if (txtTelefone.Text != "")
+                    cliente.Telefones.Add(new Telefone(cliente.Id, txtTelefone.Text));
+            }
+                
 
             return cliente;
         }
@@ -240,7 +302,7 @@ namespace MercadoETEC.views
                 txtEstado.Text = "";
             }
         }
-    
+
 
     }//Fim da classe
 }//Fim da namespace

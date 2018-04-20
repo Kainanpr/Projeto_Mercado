@@ -45,7 +45,7 @@ namespace MercadoETEC.model.service
                 /* Se ocorrer problema na gravação do cliente devemos excluir
                     * o endereço que foi gravado anteriormente, pois o endereço 
                     * não foi asociado ao cliente correto */
-                if(cliente.Endereco != null)
+                if (cliente.Endereco != null)
                     enderecoDAO.Delete(cliente.Endereco.Id);
             }
             else

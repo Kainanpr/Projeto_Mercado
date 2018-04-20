@@ -24,7 +24,7 @@ namespace MercadoETEC.model.dao
          * Esse método retorna um objeto de tipo Generico(qualquer tipo que extenda pessoa) que representa a ultima Pessoa
          * inserido no banco, para que essa Pessoa
          * possa ser associado a um funcionado ou a um cliente*/
-        public T Create<T> (T pessoa) where T : Pessoa
+        public T Create<T>(T pessoa) where T : Pessoa
         {
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
@@ -135,12 +135,12 @@ namespace MercadoETEC.model.dao
                     //Chama o metodo auxiliar para setar a Pessoa vindo do banco
                     pessoa = setPessoa(dr, pessoa);
                 }
-                else 
+                else
                 {
                     //Caso não encontre nenhuma pessoa retorna null
                     return null;
                 }
-                    
+
             }
             //Caso ocorra algum tipo de exceção será tratado aqui.
             catch (MySqlException ex)
@@ -155,13 +155,13 @@ namespace MercadoETEC.model.dao
             {
                 //Independente se ocorrer erro ou não a conexão com o banco de dados será fechada
                 dataBase.FecharConexao();
-            }        
+            }
 
             /* Retorna a pessoa pesquisada de acordo com seu ID */
             return pessoa;
         }
-        
-        public void Update<T>(T pessoa) where T : Pessoa 
+
+        public void Update<T>(T pessoa) where T : Pessoa
         {
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
@@ -206,7 +206,7 @@ namespace MercadoETEC.model.dao
         }
 
         public void Delete(int id)
-        { 
+        {
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
 
@@ -250,10 +250,11 @@ namespace MercadoETEC.model.dao
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
 
-            
-
             /* Variavel local responsável por armazenar o todas as pessoas vindas do banco */
             List<T> pessoas = new List<T>();
+
+            //Variavel responsavel os clientes
+            T pessoa = Activator.CreateInstance<T>();
 
             try
             {
@@ -261,8 +262,9 @@ namespace MercadoETEC.model.dao
                 dataBase.AbrirConexao();
 
                 /* Query responsavel por buscar uma pessoa pelo seu id */
-                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa  p "
+                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa p "
                                 + "LEFT JOIN Endereco e ON p.idEndereco = e.id "
+                                + "INNER JOIN " + pessoa.GetType().Name + " tg ON p.id = tg.id "
                                 + "ORDER BY p.id;";
 
                 //Comando responsavel pela query
@@ -272,14 +274,14 @@ namespace MercadoETEC.model.dao
                 MySqlDataReader dr = command.ExecuteReader();
 
                 //Percorrer esse objeto até obter todos os dados
-                if(dr.HasRows)
+                if (dr.HasRows)
                 {
                     while (dr.Read())
                     {
                         /* Variavel local responsável por armazenar a pessoa pesquisada no banco de dados. 
                          * (A palavra new so é usada em tipos concretos) 
                          * (Activador é uma classe que deixa criar uma instancia de tipo generico) */
-                        T pessoa = Activator.CreateInstance<T>();
+                        pessoa = Activator.CreateInstance<T>();
 
                         //Chama o metodo auxiliar para setar a Pessoa vindo do banco 
                         pessoa = setPessoa(dr, pessoa);
@@ -287,14 +289,14 @@ namespace MercadoETEC.model.dao
                         //Adiciona a pessoa na lista
                         pessoas.Add(pessoa);
                     }
-                 
+
                 }
                 else
                 {
                     //Caso ocorra algum problema retorna null
                     return null;
-                }              
-           
+                }
+
             }
             //Caso ocorra algum tipo de exceção será tratado aqui.
             catch (MySqlException ex)
@@ -329,7 +331,7 @@ namespace MercadoETEC.model.dao
 
             //Instancia um endereço para pessoa
             pessoa.Endereco = new Endereco();
-                    
+
             //Seta os dados do endereço da pessoa de acordo com o dados vindo do banco
             pessoa.Endereco.Id = dr.IsDBNull(3) == false ? dr.GetInt32(3) : 0;
             pessoa.Endereco.Rua = dr.IsDBNull(4) == false ? dr.GetString(4) : null;
