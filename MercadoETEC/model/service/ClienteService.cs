@@ -26,48 +26,44 @@ namespace MercadoETEC.model.service
 
         public void Create(Cliente cliente)
         {
-            /* Verifica se o cliente possui um endereco. 
-               Para registrar uma pessoa no banco é necessario ter um endereço cadastrado primeiro  
+            /* Para registrar uma pessoa no banco é necessario ter um endereço cadastrado primeiro  
                porque na tabela pessoa possui um atributo idEndereco como chave estrangeira */
-            if(cliente.Endereco != null)
+
+
+            /* Grava o endereço do cliente no banco de dados e retorna o ultimo endereco inserido no banco 
+             * ja com seu id setado para ser associado ao cliente correto */
+            cliente.Endereco = enderecoDAO.Create(cliente.Endereco);
+
+            /* Guardar o cliente no banco de dados e retorna o ultimo cliente inserido ja com seu id setado. */
+            /* Caso ocorra algum erro na gravação da pessoa o metodo retorna null. */
+            /* Pode ocorrer problemas de UNIQUE na coluna CPF e NOT NULL na coluna NOME. */
+            Cliente ultimoClienteInseridoBD = clienteDAO.Create(cliente);
+
+            //Verifica se o cliente é null, se retornar null não foi salvo no banco de dados
+            if (ultimoClienteInseridoBD == null)
             {
-
-
-                /* Grava o endereço do cliente no banco de dados e retorna o ultimo endereco inserido no banco 
-                 * ja com seu id setado para ser associado ao cliente correto */
-                cliente.Endereco = enderecoDAO.Create(cliente.Endereco);
-
-                /* Guardar o cliente no banco de dados e retorna o ultimo cliente inserido ja com seu id setado. */
-                /* Caso ocorra algum erro na gravação da pessoa o metodo retorna null. */
-                /* Pode ocorrer problemas de UNIQUE na coluna CPF e NOT NULL na coluna NOME. */
-                Cliente ultimoClienteInseridoBD = clienteDAO.Create(cliente);
-
-                //Verifica se o cliente é null, se retornar null não foi salvo no banco de dados
-                if (ultimoClienteInseridoBD == null)
-                {
-                    /* Se ocorrer problema na gravação do cliente devemos excluir
-                     * o endereço que foi gravado anteriormente, pois o endereço 
-                     * não foi asociado ao cliente correto */
+                /* Se ocorrer problema na gravação do cliente devemos excluir
+                    * o endereço que foi gravado anteriormente, pois o endereço 
+                    * não foi asociado ao cliente correto */
+                if(cliente.Endereco != null)
                     enderecoDAO.Delete(cliente.Endereco.Id);
-                }
-                else
+            }
+            else
+            {
+                /* Caso não retornar null associa o Id do ultimo cliente inserido
+                    * com o cliente que foi enviado para o metodo */
+                cliente.Id = ultimoClienteInseridoBD.Id;
+
+                /* Guardar os telefones do cliente no banco de dados */
+                foreach (Telefone tel in cliente.Telefones)
                 {
-                    /* Caso não retornar null associa o Id do ultimo cliente inserido
-                     * com o cliente que foi enviado para o metodo */
-                    cliente.Id = ultimoClienteInseridoBD.Id;
+                    //Associa o id do telefone com o id do cliente
+                    tel.Id = cliente.Id;
 
-                    /* Guardar os telefones do cliente no banco de dados */
-                    foreach (Telefone tel in cliente.Telefones)
-                    {
-                        //Associa o id do telefone com o id do cliente
-                        tel.Id = cliente.Id;
-
-                        //Grava o telefone do cliente no banco e verifica se o numero é null
-                        if (tel.Numero != null)
-                            telefoneDAO.Create(tel);
-                    }
+                    //Grava o telefone do cliente no banco e verifica se o numero é null
+                    if (tel.Numero != null)
+                        telefoneDAO.Create(tel);
                 }
-
             }
 
 
