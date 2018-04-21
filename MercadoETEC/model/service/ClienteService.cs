@@ -26,7 +26,6 @@ namespace MercadoETEC.model.service
             /* Para registrar uma pessoa no banco é necessario ter um endereço cadastrado primeiro  
                porque na tabela pessoa possui um atributo idEndereco como chave estrangeira */
 
-
             /* Grava o endereço do cliente no banco de dados e retorna o ultimo endereco inserido no banco 
              * ja com seu id setado para ser associado ao cliente correto */
             cliente.Endereco = enderecoDAO.Create(cliente.Endereco);

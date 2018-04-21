@@ -470,18 +470,18 @@ namespace MercadoETEC.model.dao
             pessoa.Id = dr.IsDBNull(0) == false ? dr.GetInt32(0) : 0;
             pessoa.Cpf = dr.IsDBNull(1) == false ? dr.GetString(1) : null;
             pessoa.Nome = dr.IsDBNull(2) == false ? dr.GetString(2) : null;
-            pessoa.Telefone = dr.IsDBNull(2) == false ? dr.GetString(3) : null;
+            pessoa.Telefone = dr.IsDBNull(3) == false ? dr.GetString(3) : null;
 
             //Instancia um endereço para pessoa
             pessoa.Endereco = new Endereco();
 
             //Seta os dados do endereço da pessoa de acordo com o dados vindo do banco
-            pessoa.Endereco.Id = dr.IsDBNull(3) == false ? dr.GetInt32(4) : 0;
-            pessoa.Endereco.Rua = dr.IsDBNull(4) == false ? dr.GetString(5) : null;
-            pessoa.Endereco.Numero = dr.IsDBNull(5) == false ? dr.GetInt32(6) : 0;
-            pessoa.Endereco.Cep = dr.IsDBNull(6) == false ? dr.GetInt32(7) : 0;
-            pessoa.Endereco.Cidade = dr.IsDBNull(7) == false ? dr.GetString(8) : null;
-            pessoa.Endereco.Estado = dr.IsDBNull(8) == false ? dr.GetString(9) : null;
+            pessoa.Endereco.Id = dr.IsDBNull(4) == false ? dr.GetInt32(4) : 0;
+            pessoa.Endereco.Rua = dr.IsDBNull(5) == false ? dr.GetString(5) : null;
+            pessoa.Endereco.Numero = dr.IsDBNull(6) == false ? dr.GetInt32(6) : 0;
+            pessoa.Endereco.Cep = dr.IsDBNull(7) == false ? dr.GetInt32(7) : 0;
+            pessoa.Endereco.Cidade = dr.IsDBNull(8) == false ? dr.GetString(8) : null;
+            pessoa.Endereco.Estado = dr.IsDBNull(9) == false ? dr.GetString(9) : null;
 
             return pessoa;
         }
