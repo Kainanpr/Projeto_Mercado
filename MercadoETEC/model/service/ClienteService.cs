@@ -21,7 +21,7 @@ namespace MercadoETEC.model.service
         //Atributo responsavel por realizar as operações de CRUD na endereco no banco de dados
         private EnderecoDAO enderecoDAO = new EnderecoDAO();
 
-        public void Create(Cliente cliente)
+        public Cliente Create(Cliente cliente)
         {
             /* Para registrar uma pessoa no banco é necessario ter um endereço cadastrado primeiro  
                porque na tabela pessoa possui um atributo idEndereco como chave estrangeira */
@@ -39,20 +39,27 @@ namespace MercadoETEC.model.service
             if (ultimoClienteInseridoBD == null)
             {
                 /* Se ocorrer problema na gravação do cliente devemos excluir
-                    * o endereço que foi gravado anteriormente, pois o endereço 
-                    * não foi asociado ao cliente correto */
-                if (cliente.Endereco != null)
-                    enderecoDAO.Delete(cliente.Endereco.Id);
+                 * o endereço que foi gravado anteriormente, pois o endereço 
+                 * não foi asociado ao cliente correto */
+                enderecoDAO.Delete(cliente.Endereco.Id);
+
+                /* Lança nossa propria exeção para dizer ao usuario que não foi possivel cadastrar o cliente. 
+                 * Essa exeção é necessaria pois não temos controle se o usuario irá digitar um CPF 
+                 * que já está cadastrado */
+                throw new ObjetoNotCreatedException("Cliente não foi cadastrado, digite um CPF válido!");
+
             }
             else
-            {
+            {              
                 /* Caso não retornar null associa o Id do ultimo cliente inserido
-                    * com o cliente que foi enviado para o metodo */
-                cliente.Id = ultimoClienteInseridoBD.Id;
-               
+                 * com o cliente que foi enviado para o metodo */
+                cliente.Id = ultimoClienteInseridoBD.Id;               
             }
 
-
+            /* Esse return pode não ser utilizado. 
+             * Se caso quem for utilizar o metodo precisar do cliente ja setado com seu Id 
+             * para futuras associações terá esse Return a sua disposição. */
+            return cliente;
         }
 
         public Cliente Read(int id)

@@ -66,7 +66,13 @@ namespace MercadoETEC.views
                 MessageBox.Show("Erro: Dados incorretos");
                 LimparCamposGeral();
             }
-            
+            /* Caso ocorra algum problema na gravação do cliente 
+             * irá recuperar a exceção que nos lançamos */
+            catch(ObjetoNotCreatedException ex)
+            {
+                MessageBox.Show("Erro: " + ex.Message);
+                LimparCamposGeral();
+            }        
 
             //Comandos abaixos apenas para resetar o layout
             DesabilitarCamposGeral();
