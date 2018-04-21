@@ -171,9 +171,7 @@ namespace MercadoETEC.views
             cliente.Nome = txtNome.Text == "" ? null : txtNome.Text;
             cliente.Cpf = txtCpf.Text == "" ? null : txtCpf.Text;
             cliente.Email = txtEmail.Text == "" ? null : txtEmail.Text;
-
-            Telefone tel = new Telefone();
-            tel.Numero = txtTelefone.Text == "" ? null : txtTelefone.Text;
+            cliente.Telefone = txtTelefone.Text == "" ? null : txtTelefone.Text;
 
             Endereco end = new Endereco();
             end.Rua = txtEndereco.Text == "" ? null : txtEndereco.Text;
@@ -181,9 +179,6 @@ namespace MercadoETEC.views
             end.Cep = int.Parse(txtCep.Text);
             end.Cidade = txtCidade.Text == "" ? null : txtCidade.Text;
             end.Estado = txtEstado.Text == "" ? null : txtEstado.Text;
-
-            //Associa o cliente a um telefone
-            cliente.Telefones.Add(tel);
 
             //Associa o cliente a um endereço
             cliente.Endereco = end;
@@ -199,14 +194,7 @@ namespace MercadoETEC.views
             txtNome.Text = cliente.Nome;
             txtCpf.Text = cliente.Cpf;
             txtEmail.Text = cliente.Email;
-
-            //Verifica se o usuario possui telefones na lista (nessa caso queremos mostrar apenas o 1º telefone)
-            if (cliente.Telefones.Count > 0)
-                txtTelefone.Text = cliente.Telefones[0].Numero;
-            //Caso ele nao tenha telefone cadastrado o campo deve estar em braco
-            else
-                txtTelefone.Text = "";
-
+            txtTelefone.Text = cliente.Telefone;
 
             //Verifica se o cliente possui endereço cadastrado
             if(cliente.Endereco != null)

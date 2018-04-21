@@ -53,9 +53,7 @@
     <Compile Include="model\dao\interfaceDAO\IClienteDAO.cs" />
     <Compile Include="model\dao\interfaceDAO\IEnderecoDAO.cs" />
     <Compile Include="model\dao\interfaceDAO\IPessoaDAO.cs" />
-    <Compile Include="model\dao\interfaceDAO\ITelefoneDAO.cs" />
     <Compile Include="model\dao\PessoaDAO.cs" />
-    <Compile Include="model\dao\TelefoneDAO.cs" />
     <Compile Include="model\domain\Carrinho.cs" />
     <Compile Include="model\domain\Categoria.cs" />
     <Compile Include="model\domain\Cliente.cs" />
@@ -65,7 +63,6 @@
     <Compile Include="model\domain\ItemCarrinho.cs" />
     <Compile Include="model\domain\Pessoa.cs" />
     <Compile Include="model\domain\Produto.cs" />
-    <Compile Include="model\domain\Telefone.cs" />
     <Compile Include="model\service\ClienteService.cs" />
     <Compile Include="model\service\exception\ObjetoNotFoundException.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -12,8 +12,8 @@ namespace MercadoETEC.model.domain
         private int id;
         private string cpf;
         private string nome;
-        private Endereco endereco;
-        private List<Telefone> telefones = new List<Telefone>();
+        private string telefone;
+        private Endereco endereco;       
         private List<Carrinho> carrinhos = new List<Carrinho>();
 
         //Construtor sem argumentos
@@ -31,8 +31,8 @@ namespace MercadoETEC.model.domain
         public int Id { get { return id; } set { id = value; } }
         public string Cpf { get { return cpf; } set { cpf = value; } }
         public string Nome { get { return nome; } set { nome = value; } }
+        public string Telefone { get { return telefone; } set { telefone = value; } }
         public Endereco Endereco { get { return endereco; } set { endereco = value; } }
-        public List<Telefone> Telefones { get { return telefones; } set { telefones = value; } }
         public List<Carrinho> Carrinhos { get { return carrinhos; } set { carrinhos = value; } }
 
 

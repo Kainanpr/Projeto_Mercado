@@ -42,7 +42,7 @@ namespace MercadoETEC.model.dao
                 /* Utilizamos uma Stored Procedure para retornar a ultima pessoa inserida na tabela Pessoa. 
                  * Essa procedure foi feita pelo fato de o id ser auto_increment, sendo assim, sem o uso de procedure
                  * não teriamos o controle de qual id foi inserido por ultimo. */
-                string query = "CALL sp_pessoa_insert (@Cpf, @Nome, @IdEndereco)";
+                string query = "CALL sp_pessoa_insert (@Cpf, @Nome, @Telefone, @IdEndereco)";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -50,11 +50,13 @@ namespace MercadoETEC.model.dao
                 //Adição de parametros e espeficicação dos tipos
                 command.Parameters.Add("@Cpf", MySqlDbType.String);
                 command.Parameters.Add("@Nome", MySqlDbType.String);
+                command.Parameters.Add("@Telefone", MySqlDbType.String);
                 command.Parameters.Add("@IdEndereco", MySqlDbType.Int32);
 
                 //Atribuição de valores
                 command.Parameters["@Cpf"].Value = pessoa.Cpf;
                 command.Parameters["@Nome"].Value = pessoa.Nome;
+                command.Parameters["@Telefone"].Value = pessoa.Telefone;
                 command.Parameters["@IdEndereco"].Value = pessoa.Endereco.Id;
 
                 //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
@@ -113,7 +115,7 @@ namespace MercadoETEC.model.dao
                 dataBase.AbrirConexao();
 
                 /* Query responsavel por buscar uma pessoa pelo seu id */
-                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa  p "
+                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa p "
                                + "LEFT JOIN Endereco e ON p.idEndereco = e.id "
                                + "WHERE p.id = @Id;";
 
@@ -172,7 +174,7 @@ namespace MercadoETEC.model.dao
                 dataBase.AbrirConexao();
 
                 /* Query responsavel por atualizar a pessoa na tabela pessoa do banco */
-                string query = "UPDATE Pessoa SET cpf = @Cpf, nome = @Nome WHERE id = @Id;";
+                string query = "UPDATE Pessoa SET cpf = @Cpf, nome = @Nome, telefone = @Telefone WHERE id = @Id;";
 
                 //Comando responsavel pela query
                 MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
@@ -180,11 +182,13 @@ namespace MercadoETEC.model.dao
                 //Adição de parametros e espeficicação dos tipos
                 command.Parameters.Add("@Cpf", MySqlDbType.String);
                 command.Parameters.Add("@Nome", MySqlDbType.String);
+                command.Parameters.Add("@Telefone", MySqlDbType.String);
                 command.Parameters.Add("@Id", MySqlDbType.Int32);
 
                 //Atribuição de valores
                 command.Parameters["@Cpf"].Value = pessoa.Cpf;
                 command.Parameters["@Nome"].Value = pessoa.Nome;
+                command.Parameters["@Telefone"].Value = pessoa.Telefone;
                 command.Parameters["@Id"].Value = pessoa.Id;
 
                 //Executar instrução sem retorno de dados
@@ -319,7 +323,7 @@ namespace MercadoETEC.model.dao
             return pessoas;
         }
 
-        public T FindByCpf<T>(string cpf) where T : Pessoa 
+        public T FindByCpf<T>(string cpf) where T : Pessoa
         {
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
@@ -377,7 +381,7 @@ namespace MercadoETEC.model.dao
             }
 
             /* Retorna a pessoa pesquisada de acordo com seu ID */
-            return pessoa; 
+            return pessoa;
         }
 
         public List<T> FindByName<T>(string name) where T : Pessoa
@@ -462,20 +466,22 @@ namespace MercadoETEC.model.dao
         private T setPessoa<T>(MySqlDataReader dr, T pessoa) where T : Pessoa
         {
 
+            //Seta os dados da pessoa de acordo com o dados vindo do banco
             pessoa.Id = dr.IsDBNull(0) == false ? dr.GetInt32(0) : 0;
             pessoa.Cpf = dr.IsDBNull(1) == false ? dr.GetString(1) : null;
             pessoa.Nome = dr.IsDBNull(2) == false ? dr.GetString(2) : null;
+            pessoa.Telefone = dr.IsDBNull(2) == false ? dr.GetString(3) : null;
 
             //Instancia um endereço para pessoa
             pessoa.Endereco = new Endereco();
 
             //Seta os dados do endereço da pessoa de acordo com o dados vindo do banco
-            pessoa.Endereco.Id = dr.IsDBNull(3) == false ? dr.GetInt32(3) : 0;
-            pessoa.Endereco.Rua = dr.IsDBNull(4) == false ? dr.GetString(4) : null;
-            pessoa.Endereco.Numero = dr.IsDBNull(5) == false ? dr.GetInt32(5) : 0;
-            pessoa.Endereco.Cep = dr.IsDBNull(6) == false ? dr.GetInt32(6) : 0;
-            pessoa.Endereco.Cidade = dr.IsDBNull(7) == false ? dr.GetString(7) : null;
-            pessoa.Endereco.Estado = dr.IsDBNull(8) == false ? dr.GetString(8) : null;
+            pessoa.Endereco.Id = dr.IsDBNull(3) == false ? dr.GetInt32(4) : 0;
+            pessoa.Endereco.Rua = dr.IsDBNull(4) == false ? dr.GetString(5) : null;
+            pessoa.Endereco.Numero = dr.IsDBNull(5) == false ? dr.GetInt32(6) : 0;
+            pessoa.Endereco.Cep = dr.IsDBNull(6) == false ? dr.GetInt32(7) : 0;
+            pessoa.Endereco.Cidade = dr.IsDBNull(7) == false ? dr.GetString(8) : null;
+            pessoa.Endereco.Estado = dr.IsDBNull(8) == false ? dr.GetString(9) : null;
 
             return pessoa;
         }

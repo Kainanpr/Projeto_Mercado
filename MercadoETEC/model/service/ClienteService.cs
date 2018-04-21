@@ -21,9 +21,6 @@ namespace MercadoETEC.model.service
         //Atributo responsavel por realizar as operações de CRUD na endereco no banco de dados
         private EnderecoDAO enderecoDAO = new EnderecoDAO();
 
-        //Atributo responsavel por realizar as operações de CRUD no telefone no banco de dados
-        private TelefoneDAO telefoneDAO = new TelefoneDAO();
-
         public void Create(Cliente cliente)
         {
             /* Para registrar uma pessoa no banco é necessario ter um endereço cadastrado primeiro  
@@ -36,7 +33,7 @@ namespace MercadoETEC.model.service
 
             /* Guardar o cliente no banco de dados e retorna o ultimo cliente inserido ja com seu id setado. */
             /* Caso ocorra algum erro na gravação da pessoa o metodo retorna null. */
-            /* Pode ocorrer problemas de UNIQUE na coluna CPF e NOT NULL na coluna NOME. */
+            /* Pode ocorrer problemas de UNIQUE e NOT NULL na coluna CPF. */
             Cliente ultimoClienteInseridoBD = clienteDAO.Create(cliente);
 
             //Verifica se o cliente é null, se retornar null não foi salvo no banco de dados
@@ -53,17 +50,7 @@ namespace MercadoETEC.model.service
                 /* Caso não retornar null associa o Id do ultimo cliente inserido
                     * com o cliente que foi enviado para o metodo */
                 cliente.Id = ultimoClienteInseridoBD.Id;
-
-                /* Guardar os telefones do cliente no banco de dados */
-                foreach (Telefone tel in cliente.Telefones)
-                {
-                    //Associa o id do telefone com o id do cliente
-                    tel.Id = cliente.Id;
-
-                    //Grava o telefone do cliente no banco e verifica se o numero é null
-                    if (tel.Numero != null)
-                        telefoneDAO.Create(tel);
-                }
+               
             }
 
 
@@ -78,15 +65,7 @@ namespace MercadoETEC.model.service
             if (cliente == null)
                 throw new ObjetoNotFoundException("Cliente não encontrado");
 
-            /* Delega a pesquisa do telefone para o DAO correspondente 
-             * caso nao encontrar será retornado null*/
-            Telefone tel = telefoneDAO.Read(cliente.Id);
-
-            /* Caso não encontre nenhum telefone não será necessario lançar uma exceção, 
-             * apenas não adicionamos na sua lista de telefones */
-            if(tel != null)
-                cliente.Telefones.Add(tel);
-
+            //Retorna o cliente pesquisado
             return cliente;
         }
 
@@ -96,44 +75,19 @@ namespace MercadoETEC.model.service
             clienteDAO.Update(cliente);
 
             //Atualiza o endereço (Verifica se a pessoa possui um endereco)
-            if(cliente.Endereco != null)
-                enderecoDAO.Update(cliente.Endereco);
+            if (cliente.Endereco != null)
+                enderecoDAO.Update(cliente.Endereco);        
 
-            //Verifica se o cliente tem pelo menos 1 telefone ou mais
-            if(cliente.Telefones.Count > 0)
-            {
-                //Pesquisa para verificar se o telefone ja foi inserido no banco
-                /* Se retornar NULL quer dizer que não existe ainda */
-                Telefone tel = telefoneDAO.Read(cliente.Id);
-
-                if(tel != null)
-                {
-                    /* Atualiza o telefone(Nesse sistema é possivel cadastrar apenas um telefone) 
-                    * Mais foi implementado como uma lista se caso precisar de mais de um telefone */
-                    telefoneDAO.Update(cliente.Telefones[0]);
-                }
-                else
-                {
-                    //Cria o telefone na lista
-                    telefoneDAO.Create(cliente.Telefones[0]);
-                }
-
-                
-            }
-               
         }
 
         public void Delete(Cliente cliente)
         {
-            //Deleta o telefone do banco
-            if(cliente.Telefones.Count > 0)
-                telefoneDAO.Delete(cliente.Telefones[0].Id);
 
             //Delete o cliente do banco
             clienteDAO.Delete(cliente.Id);
 
             //Verifica se o cliente tem endereço e deleta o endereco do banco
-            if(cliente.Endereco != null)
+            if (cliente.Endereco != null)
                 enderecoDAO.Delete(cliente.Endereco.Id);
         }
 
@@ -143,24 +97,9 @@ namespace MercadoETEC.model.service
             List<Cliente> clientes = clienteDAO.ListAll();
 
             //Caso não encontre nenhum cliente será lançado a exceção que nos criamos
-            if(clientes == null)
-            {
+            if (clientes == null)
                 throw new ObjetoNotFoundException("Clientes não encontrados");
-            }
-
-            foreach (Cliente cli in clientes)
-            {
-
-                /* Delega a pesquisa do telefone para o DAO correspondente 
-                 * caso nao encontrar será retornado null*/
-                Telefone tel = telefoneDAO.Read(cli.Id);
-
-                /* Caso não encontre nenhum telefone não será necessario lançar uma exceção, 
-                 * apenas não adicionamos na sua lista de telefones */
-                if (tel != null)
-                    cli.Telefones.Add(tel);
-            }
-
+            
 
             return clientes;
         }
@@ -171,24 +110,9 @@ namespace MercadoETEC.model.service
             List<Cliente> clientes = clienteDAO.FindByName(name);
 
             //Caso não encontre nenhum cliente será lançado a exceção que nos criamos
-            if (clientes == null)
-            {
+            if (clientes == null)          
                 throw new ObjetoNotFoundException("Cliente não encontrado");
-            }
-
-            foreach (Cliente cli in clientes)
-            {
-
-                /* Delega a pesquisa do telefone para o DAO correspondente 
-                 * caso nao encontrar será retornado null*/
-                Telefone tel = telefoneDAO.Read(cli.Id);
-
-                /* Caso não encontre nenhum telefone não será necessario lançar uma exceção, 
-                 * apenas não adicionamos na sua lista de telefones */
-                if (tel != null)
-                    cli.Telefones.Add(tel);
-            }
-
+            
 
             return clientes;
         }
@@ -202,14 +126,6 @@ namespace MercadoETEC.model.service
             if (cliente == null)
                 throw new ObjetoNotFoundException("Cliente não encontrado");
 
-            /* Delega a pesquisa do telefone para o DAO correspondente 
-             * caso nao encontrar será retornado null*/
-            Telefone tel = telefoneDAO.Read(cliente.Id);
-
-            /* Caso não encontre nenhum telefone não será necessario lançar uma exceção, 
-             * apenas não adicionamos na sua lista de telefones */
-            if (tel != null)
-                cliente.Telefones.Add(tel);
 
             return cliente;
         }

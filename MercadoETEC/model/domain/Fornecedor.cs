@@ -39,6 +39,11 @@ namespace MercadoETEC.model.domain
         /**
          * 
          */
+        private String telefone;
+
+        /**
+         * 
+         */
         private HashSet<Produto> produtos;
 
         /**
@@ -49,7 +54,6 @@ namespace MercadoETEC.model.domain
         /**
          * 
          */
-        private HashSet<Telefone> telefones;
 
     }
 }

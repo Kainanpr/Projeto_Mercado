@@ -213,6 +213,34 @@ namespace MercadoETEC.views
             }
         }
 
+        private void btnExcluir_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(this, "Você tem certeza que deseja excluir este cliente?", "Sim", MessageBoxButtons.YesNo);
+
+            if (result == DialogResult.Yes)
+            {
+                clienteService.Delete(cliente);
+
+                //Comandos abaixos apenas para resetar o layout
+                DesabilitarCamposGeral();
+
+                btnSalvar.Enabled = false;
+                btnCancelar.Enabled = false;
+                btnExcluir.Enabled = false;
+
+                btnListar.Enabled = true;
+                btnAlterar.Enabled = true;
+                btnPesquisar.Enabled = true;
+
+                LimparCamposGeral();
+
+                //Limpa todas as rows
+                dataGridViewClientes.Rows.Clear();
+            }
+
+        }
+
+
         //Evento é disparado sempre que eu escolher uma linha da gride
         private void dataGridViewClientes_SelectionChanged(object sender, EventArgs e)
         {
@@ -234,34 +262,7 @@ namespace MercadoETEC.views
                 LimparCamposGeral();
             }
             
-        }
-
-        private void btnExcluir_Click(object sender, EventArgs e)
-        {
-            var result = MessageBox.Show(this, "Você tem certeza que deseja excluir este cliente?", "Sim", MessageBoxButtons.YesNo);
-            
-            if (result == DialogResult.Yes)
-            {
-                clienteService.Delete(cliente);
-
-                //Comandos abaixos apenas para resetar o layout
-                DesabilitarCamposGeral();
-
-                btnSalvar.Enabled = false;
-                btnCancelar.Enabled = false;
-                btnExcluir.Enabled = false;
-
-                btnListar.Enabled = true;
-                btnAlterar.Enabled = true;
-                btnPesquisar.Enabled = true;
-
-                LimparCamposGeral();
-
-                //Limpa todas as rows
-                dataGridViewClientes.Rows.Clear();            
-            }
-
-        }
+        }       
 
         //Metodos auxiliares
         private void AbilitarCamposGeral()
@@ -323,22 +324,13 @@ namespace MercadoETEC.views
             cliente.Nome = txtNome.Text == "" ? null : txtNome.Text;
             cliente.Cpf = txtCpf.Text == "" ? null : txtCpf.Text;
             cliente.Email = txtEmail.Text == "" ? null : txtEmail.Text;
+            cliente.Telefone = txtTelefone.Text == "" ? null : txtTelefone.Text;
 
             cliente.Endereco.Rua = txtEndereco.Text == "" ? null : txtEndereco.Text;
             cliente.Endereco.Numero = int.Parse(txtNumero.Text);
             cliente.Endereco.Cep = int.Parse(txtCep.Text);
             cliente.Endereco.Cidade = txtCidade.Text == "" ? null : txtCidade.Text;
-            cliente.Endereco.Estado = txtEstado.Text == "" ? null : txtEstado.Text;
-
-            //Verifica se o cliente tem telefones na sua lista
-            if(cliente.Telefones.Count > 0)
-                cliente.Telefones[0].Numero = txtTelefone.Text == "" ? null : txtTelefone.Text;
-            else
-            {
-                if (txtTelefone.Text != "")
-                    cliente.Telefones.Add(new Telefone(cliente.Id, txtTelefone.Text));
-            }
-                
+            cliente.Endereco.Estado = txtEstado.Text == "" ? null : txtEstado.Text;            
 
             return cliente;
         }
@@ -351,14 +343,7 @@ namespace MercadoETEC.views
             txtNome.Text = cliente.Nome;
             txtCpf.Text = cliente.Cpf;
             txtEmail.Text = cliente.Email;
-
-            //Verifica se o usuario possui telefones na lista (nessa caso queremos mostrar apenas o 1º telefone)
-            if (cliente.Telefones.Count > 0)
-                txtTelefone.Text = cliente.Telefones[0].Numero;
-            //Caso ele nao tenha telefone cadastrado o campo deve estar em braco
-            else
-                txtTelefone.Text = "";
-
+            txtTelefone.Text = cliente.Telefone;
 
             //Verifica se o cliente possui endereço cadastrado
             if (cliente.Endereco != null)
