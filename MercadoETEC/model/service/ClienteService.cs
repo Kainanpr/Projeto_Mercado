@@ -165,5 +165,54 @@ namespace MercadoETEC.model.service
             return clientes;
         }
 
+        public List<Cliente> FindByName(string name)
+        {
+            //Lista todos os clientes
+            List<Cliente> clientes = clienteDAO.FindByName(name);
+
+            //Caso não encontre nenhum cliente será lançado a exceção que nos criamos
+            if (clientes == null)
+            {
+                throw new ObjetoNotFoundException("Cliente não encontrado");
+            }
+
+            foreach (Cliente cli in clientes)
+            {
+
+                /* Delega a pesquisa do telefone para o DAO correspondente 
+                 * caso nao encontrar será retornado null*/
+                Telefone tel = telefoneDAO.Read(cli.Id);
+
+                /* Caso não encontre nenhum telefone não será necessario lançar uma exceção, 
+                 * apenas não adicionamos na sua lista de telefones */
+                if (tel != null)
+                    cli.Telefones.Add(tel);
+            }
+
+
+            return clientes;
+        }
+
+        public Cliente FindByCpf(string cpf)
+        {
+            //Delega a pesquisa do cliente para o DAO correspondente
+            Cliente cliente = clienteDAO.FindByCpf(cpf);
+
+            //Caso não encontre nenhum cliente será lançado a exceção que nos criamos
+            if (cliente == null)
+                throw new ObjetoNotFoundException("Cliente não encontrado");
+
+            /* Delega a pesquisa do telefone para o DAO correspondente 
+             * caso nao encontrar será retornado null*/
+            Telefone tel = telefoneDAO.Read(cliente.Id);
+
+            /* Caso não encontre nenhum telefone não será necessario lançar uma exceção, 
+             * apenas não adicionamos na sua lista de telefones */
+            if (tel != null)
+                cliente.Telefones.Add(tel);
+
+            return cliente;
+        }
+
     }//Fim da classe
 }//Fim da namespace

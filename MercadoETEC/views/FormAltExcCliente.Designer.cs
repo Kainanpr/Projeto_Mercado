@@ -34,7 +34,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
-            this.txtDadoCliente = new System.Windows.Forms.TextBox();
+            this.txtPesquisarCliente = new System.Windows.Forms.TextBox();
             this.dataGridViewClientes = new System.Windows.Forms.DataGridView();
             this.codigo = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.nome = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -122,7 +122,7 @@
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.txtDadoCliente);
+            this.panel1.Controls.Add(this.txtPesquisarCliente);
             this.panel1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.panel1.Location = new System.Drawing.Point(401, 60);
             this.panel1.Name = "panel1";
@@ -139,13 +139,13 @@
             this.label2.TabIndex = 1;
             this.label2.Text = "Localizar cliente:";
             // 
-            // txtDadoCliente
+            // txtPesquisarCliente
             // 
-            this.txtDadoCliente.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDadoCliente.Location = new System.Drawing.Point(137, 11);
-            this.txtDadoCliente.Name = "txtDadoCliente";
-            this.txtDadoCliente.Size = new System.Drawing.Size(222, 24);
-            this.txtDadoCliente.TabIndex = 0;
+            this.txtPesquisarCliente.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPesquisarCliente.Location = new System.Drawing.Point(137, 11);
+            this.txtPesquisarCliente.Name = "txtPesquisarCliente";
+            this.txtPesquisarCliente.Size = new System.Drawing.Size(222, 24);
+            this.txtPesquisarCliente.TabIndex = 0;
             // 
             // dataGridViewClientes
             // 
@@ -201,11 +201,11 @@
             // btnListar
             // 
             this.btnListar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnListar.Location = new System.Drawing.Point(492, 7);
+            this.btnListar.Location = new System.Drawing.Point(482, 7);
             this.btnListar.Name = "btnListar";
-            this.btnListar.Size = new System.Drawing.Size(78, 32);
+            this.btnListar.Size = new System.Drawing.Size(91, 32);
             this.btnListar.TabIndex = 9;
-            this.btnListar.Text = "Listar";
+            this.btnListar.Text = "Listar Todos";
             this.btnListar.UseVisualStyleBackColor = true;
             this.btnListar.Click += new System.EventHandler(this.btnListar_Click);
             // 
@@ -224,7 +224,7 @@
             // btnPesquisar
             // 
             this.btnPesquisar.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnPesquisar.Location = new System.Drawing.Point(395, 7);
+            this.btnPesquisar.Location = new System.Drawing.Point(389, 7);
             this.btnPesquisar.Name = "btnPesquisar";
             this.btnPesquisar.Size = new System.Drawing.Size(78, 32);
             this.btnPesquisar.TabIndex = 7;
@@ -521,7 +521,7 @@
         private System.Windows.Forms.RadioButton radioButtonCpf;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.TextBox txtDadoCliente;
+        private System.Windows.Forms.TextBox txtPesquisarCliente;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView dataGridViewClientes;
         private System.Windows.Forms.DataGridViewTextBoxColumn codigo;

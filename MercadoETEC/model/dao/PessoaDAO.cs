@@ -250,10 +250,12 @@ namespace MercadoETEC.model.dao
             //Recupera a instancia unica do banco de dados
             dataBase = DataBase.GetInstance();
 
-            /* Variavel local responsável por armazenar o todas as pessoas vindas do banco */
+            /* Variavel local responsável por armazenar todas as pessoas vindas do banco */
             List<T> pessoas = new List<T>();
 
-            //Variavel responsavel os clientes
+            /* Variavel local responsável por armazenar a  pessoa pesquisada no banco de dados. 
+             * (A palavra new so é usada em tipos concretos) 
+             * (Activador é uma classe que deixa criar uma instancia de tipo generico) */
             T pessoa = Activator.CreateInstance<T>();
 
             try
@@ -317,8 +319,143 @@ namespace MercadoETEC.model.dao
             return pessoas;
         }
 
-        public T FindByCpf<T>(string cpf) where T : Pessoa { return null; }
-        public List<Pessoa> FindByName(string name) { return null; }
+        public T FindByCpf<T>(string cpf) where T : Pessoa 
+        {
+            //Recupera a instancia unica do banco de dados
+            dataBase = DataBase.GetInstance();
+
+            /* Variavel local responsável por armazenar a  pessoa pesquisada no banco de dados. 
+             * (A palavra new so é usada em tipos concretos) 
+             * (Activador é uma classe que deixa criar uma instancia de tipo generico) */
+            T pessoa = Activator.CreateInstance<T>();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                /* Query responsavel por buscar uma pessoa pelo seu CPF */
+                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa  p "
+                               + "LEFT JOIN Endereco e ON p.idEndereco = e.id "
+                               + "WHERE p.cpf LIKE @Cpf;";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Adição de parametros ja com valor
+                command.Parameters.AddWithValue("@Cpf", cpf);
+
+                //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
+                MySqlDataReader dr = command.ExecuteReader();
+
+                //Verifica se tem dados para ser lidos
+                if (dr.Read())
+                {
+                    //Chama o metodo auxiliar para setar a Pessoa vindo do banco
+                    pessoa = setPessoa(dr, pessoa);
+                }
+                else
+                {
+                    //Caso não encontre nenhuma pessoa retorna null
+                    return null;
+                }
+
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
+            }
+            finally
+            {
+                //Independente se ocorrer erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+
+            /* Retorna a pessoa pesquisada de acordo com seu ID */
+            return pessoa; 
+        }
+
+        public List<T> FindByName<T>(string name) where T : Pessoa
+        {
+            //Recupera a instancia unica do banco de dados
+            dataBase = DataBase.GetInstance();
+
+            /* Variavel local responsável por armazenar o todas as pessoas vindas do banco */
+            List<T> pessoas = new List<T>();
+
+            /* Variavel local responsável por armazenar a  pessoa pesquisada no banco de dados. 
+             * (A palavra new so é usada em tipos concretos) 
+             * (Activador é uma classe que deixa criar uma instancia de tipo generico) */
+            T pessoa = Activator.CreateInstance<T>();
+
+            try
+            {
+                //Tenta abrir a conexao
+                dataBase.AbrirConexao();
+
+                /* Query responsavel por buscar uma pessoa pelo seu nome */
+                string query = "SELECT p.*, e.rua, e.numero, e.cep, e.cidade, e.estado FROM Pessoa p "
+                                + "LEFT JOIN Endereco e ON p.idEndereco = e.id "
+                                + "INNER JOIN " + pessoa.GetType().Name + " tg ON p.id = tg.id "
+                                + "WHERE lower(p.nome) LIKE @Name ORDER BY p.id;";
+
+                //Comando responsavel pela query
+                MySqlCommand command = new MySqlCommand(query, dataBase.GetConexao());
+
+                //Adição de parametros ja com valor
+                command.Parameters.AddWithValue("@Name", "%" + name + "%");
+
+                //Executar instrução com retorno de dados, retorna objeto do tipo MySqlDataReader
+                MySqlDataReader dr = command.ExecuteReader();
+
+                //Percorrer esse objeto até obter todos os dados
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        /* Variavel local responsável por armazenar a pessoa pesquisada no banco de dados. 
+                         * (A palavra new so é usada em tipos concretos) 
+                         * (Activador é uma classe que deixa criar uma instancia de tipo generico) */
+                        pessoa = Activator.CreateInstance<T>();
+
+                        //Chama o metodo auxiliar para setar a Pessoa vindo do banco 
+                        pessoa = setPessoa(dr, pessoa);
+
+                        //Adiciona a pessoa na lista
+                        pessoas.Add(pessoa);
+                    }
+
+                }
+                else
+                {
+                    //Caso ocorra algum problema retorna null
+                    return null;
+                }
+
+            }
+            //Caso ocorra algum tipo de exceção será tratado aqui.
+            catch (MySqlException ex)
+            {
+                //Mostrar o erro na tela
+                MessageBox.Show("Erro: " + ex.Message);
+
+                //Caso ocorra algum problema retorna null
+                return null;
+            }
+            finally
+            {
+                //Independente se ocorrer erro ou não a conexão com o banco de dados será fechada
+                dataBase.FecharConexao();
+            }
+
+            /* Retorna todas as pessoas pesquisadas */
+            return pessoas;
+        }
 
         /* Metodo auxiliar responsavel por setar os dados da pessoa vindo do dados do banco
          * (Método generico) */

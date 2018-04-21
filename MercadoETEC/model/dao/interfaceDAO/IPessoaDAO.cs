@@ -18,7 +18,7 @@ namespace MercadoETEC.model.dao.interfaceDAO
         void Update<T>(T pessoa) where T : Pessoa;
         void Delete(int id);
         List<T> ListAll<T>() where T : Pessoa;
-        List<Pessoa> FindByName(string name);
+        List<T> FindByName<T>(string name) where T : Pessoa;
 
     }//Fim da interface
 }//Fim da namespace

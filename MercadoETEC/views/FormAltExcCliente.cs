@@ -41,13 +41,93 @@ namespace MercadoETEC.views
 
         private void btnPesquisar_Click(object sender, EventArgs e)
         {
-            
+            //Verifica se o cliente digitou algo no campo localizar cliente
+            if (txtPesquisarCliente.Text != "")
+            {
+
+                //Verifica se o radio name esta selecionado
+                if (radioButtonNome.Checked)
+                {
+
+                    //Irá tentar encontrar um cliente
+                    try
+                    {
+                        /*Encontra o cliente de acordo com seu nome
+                         *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
+                        List<Cliente> clientes = clienteService.FindByName(txtPesquisarCliente.Text.ToLower());
+
+                        //Chama o metodo auxiliar que nos criamos para atualizar a tabela de acordo com os dados
+                        AtualizarGrid(clientes);
+                    }
+                    //Caso não encontre nenhum cliente irá recuperar a exceção que nos lançamos
+                    catch (ObjetoNotFoundException ex)
+                    {
+                        //Recupera a exceção com o erro que nos instanciamos
+                        MessageBox.Show("Erro: " + ex.Message);
+
+                        //Limpa todas as rows
+                        dataGridViewClientes.Rows.Clear();
+                    }
+
+                }//Fim if
+
+                //Verifica se o raio cpf esta selecionado
+                else if (radioButtonCpf.Checked)
+                {
+
+                    //Irá tentar encontrar um cliente
+                    try
+                    {
+                        /*Encontra o cliente de acordo com seu cpf
+                         *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
+                        Cliente cliente = clienteService.FindByCpf(txtPesquisarCliente.Text.ToLower());
+
+                        //Limpa todas as rows
+                        dataGridViewClientes.Rows.Clear();
+
+                        //Atualiza a gride
+                        dataGridViewClientes.Rows.Add(cliente.Id, cliente.Nome, cliente.Cpf);
+                        
+                    }
+                    //Caso não encontre nenhum cliente irá recuperar a exceção que nos lançamos
+                    catch (ObjetoNotFoundException ex)
+                    {
+                        //Recupera a exceção com o erro que nos instanciamos
+                        MessageBox.Show("Erro: " + ex.Message);
+
+                        //Limpa todas as rows
+                        dataGridViewClientes.Rows.Clear();
+                    }
+                }
+
+            }//Fim if
+            else
+            {
+                MessageBox.Show("Campo está em branco");
+            }
+           
         }
 
         private void btnListar_Click(object sender, EventArgs e)
         {
+            //Irá tentar encontrar um cliente
+            try
+            {
+                /*Encontra o cliente de acordo com seu id
+                 *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
+                List<Cliente> clientes = clienteService.ListAll();
+
+                //Chama o metodo auxiliar que nos criamos para atualizar a tabela de acordo com os dados
+                AtualizarGrid(clientes);
+            }
+            //Caso não encontre nenhum cliente irá recuperar a exceção que nos lançamos
+            catch (ObjetoNotFoundException ex)
+            {
+                //Recupera a exceção com o erro que nos instanciamos
+                MessageBox.Show("Erro: " + ex.Message);
+
+            }
             
-            AtualizarGrid();
         }
 
         private void btnAlterar_Click(object sender, EventArgs e)
@@ -100,23 +180,37 @@ namespace MercadoETEC.views
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {
-            //Recupera os dados digitados na view
-            cliente = GetDTOCadastro(cliente);
+            var result = MessageBox.Show(this, "Você tem certeza que deseja atualizar este cliente?", "Sim", MessageBoxButtons.YesNo);
 
-            //Envia o cliente para a camada de service que sera responsavel pela atualização do cliente
-            clienteService.Update(cliente);
+            if (result == DialogResult.Yes)
+            {
 
-            //Comandos abaixos apenas para resetar o layout
-            DesabilitarCamposGeral();
+                try
+                {
+                    //Recupera os dados digitados na view
+                    cliente = GetDTOCadastro(cliente);
 
-            btnSalvar.Enabled = false;
-            btnCancelar.Enabled = false;
-            btnExcluir.Enabled = false;
+                    //Envia o cliente para a camada de service que sera responsavel pela atualização do cliente
+                    clienteService.Update(cliente);
+                }
+                //Captura uma exceção caso o usuario digite algo que esteja incorreto
+                catch (FormatException)
+                {
+                    MessageBox.Show("Erro: Dados incorretos");
+                    LimparCamposGeral();
+                }
 
-            btnListar.Enabled = true;
-            btnAlterar.Enabled = true;
-            btnPesquisar.Enabled = true;
+                //Comandos abaixos apenas para resetar o layout
+                DesabilitarCamposGeral();
 
+                btnSalvar.Enabled = false;
+                btnCancelar.Enabled = false;
+                btnExcluir.Enabled = false;
+
+                btnListar.Enabled = true;
+                btnAlterar.Enabled = true;
+                btnPesquisar.Enabled = true;
+            }
         }
 
         //Evento é disparado sempre que eu escolher uma linha da gride
@@ -163,7 +257,8 @@ namespace MercadoETEC.views
 
                 LimparCamposGeral();
 
-                AtualizarGrid();
+                //Limpa todas as rows
+                dataGridViewClientes.Rows.Clear();            
             }
 
         }
@@ -208,35 +303,17 @@ namespace MercadoETEC.views
             txtNome.Clear();
         }
 
-        private void AtualizarGrid()
-        {
-            //Irá tentar encontrar um cliente
-            try
+        private void AtualizarGrid(List<Cliente> clientes)
+        {     
+            //Limpa todas as rows
+            dataGridViewClientes.Rows.Clear();
+
+            //Percorre a lista de clientes
+            foreach (Cliente cli in clientes)
             {
-                //Limpa todas as rows
-                dataGridViewClientes.Rows.Clear();
-
-                /*Encontra o cliente de acordo com seu ID 
-                 *(Metodo pode lançar uma exceção caso nao encontre o cliente)*/
-                List<Cliente> clientes = clienteService.ListAll();
-
-                //Percorre a lista de clientes
-                foreach (Cliente cli in clientes)
-                {
-                    //Adiciona os dados do cliente na row
-                    dataGridViewClientes.Rows.Add(cli.Id, cli.Nome, cli.Cpf);
-
-                }
-
-            }
-
-            //Caso não encontre nenhum cliente irá recuperar a exceção que nos lançamos
-            catch (ObjetoNotFoundException ex)
-            {
-                //Recupera a exceção com o erro que nos instanciamos
-                MessageBox.Show("Erro: " + ex.Message);
-
-            }
+                //Adiciona os dados do cliente na row
+                dataGridViewClientes.Rows.Add(cli.Id, cli.Nome, cli.Cpf);
+            } 
         }
 
         /* Metodos auxiliares (DTO). 
